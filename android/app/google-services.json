@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "843308831272",
+    "firebase_url": "https://imaginescholar-8cd51-default-rtdb.firebaseio.com",
+    "project_id": "imaginescholar-8cd51",
+    "storage_bucket": "imaginescholar-8cd51.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:843308831272:android:ed9a9b5e703f4fb9afdb1d",
+        "android_client_info": {
+          "package_name": "com.example.imaginine_scholar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "843308831272-omp9ut4ajribblps9fq9sbioicvbpig5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8-wkbhsSMLUXepj3Ie1zh3XkeEwJ9Fzo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "843308831272-omp9ut4ajribblps9fq9sbioicvbpig5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "843308831272-dgq8b5gj263adgomgu3iedvrj4elm0i9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.imaginineScholar"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:843308831272:android:380fed73b3a81245afdb1d",
+        "android_client_info": {
+          "package_name": "com.imaginescholar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "843308831272-omp9ut4ajribblps9fq9sbioicvbpig5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8-wkbhsSMLUXepj3Ie1zh3XkeEwJ9Fzo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "843308831272-omp9ut4ajribblps9fq9sbioicvbpig5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "843308831272-dgq8b5gj263adgomgu3iedvrj4elm0i9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.imaginineScholar"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
