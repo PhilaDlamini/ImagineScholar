@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "3C92D401-DDB8-4865-A8EF-9BC2FC1DF697"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A2129219-98C2-4044-9BDA-9FFDF5D32B9F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Imagine Scholar/Views/PostsView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "53"
+            endingLineNumber = "53"
+            landmarkName = "PostView"
+            landmarkType = "14">
+            <Locations>
+               <Location
+                  uuid = "A2129219-98C2-4044-9BDA-9FFDF5D32B9F - 83f1b54622ce057c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; Swift.Optional&lt;SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of SwiftUI.View.foregroundColor(Swift.Optional&lt;SwiftUI.Color&gt;) -&gt; some&gt;&gt;.0, SwiftUI.Image&gt;, SwiftUI.Image&gt;&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.buttonStyle&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.PrimitiveButtonStyle&gt;(&#x3c4;_1_0) -&gt; some&gt;&gt;.0, SwiftUI.Text)&gt; in closure #2 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.buttonStyle&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.PrimitiveButtonStyle&gt;(&#x3c4;_1_0) -&gt; some&gt;&gt;.0, SwiftUI.Text)&gt;&gt;, SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Image, SwiftUI.Text)&gt;&gt;, SwiftUI.HStack&lt;SwiftUI.Image&gt;)&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.clipShape&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.Shape&gt;(_: &#x3c4;_1_0, style: SwiftUI.FillStyle) -&gt; some&gt;&gt;.0, SwiftUI.Text, SwiftUI.Spacer, SwiftUI.Text)&gt;&gt;, SwiftUI.Text, SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.buttonStyle&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.PrimitiveButtonStyle&gt;(&#x3c4;_1_0) -&gt; some&gt;&gt;.0, SwiftUI.Text)&gt;&gt;, SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Image, SwiftUI.Text)&gt;&gt;, SwiftUI.HStack&lt;SwiftUI.Image&gt;)&gt;&gt;)&gt; in closure #1 () -&gt; SwiftUI.VStack&lt;SwiftUI.TupleView&lt;(SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.clipShape&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.Shape&gt;(_: &#x3c4;_1_0, style: SwiftUI.FillStyle) -&gt; some&gt;&gt;.0, SwiftUI.Text, SwiftUI.Spacer, SwiftUI.Text)&gt;&gt;, SwiftUI.Text, SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.buttonStyle&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.PrimitiveButtonStyle&gt;(&#x3c4;_1_0) -&gt; some&gt;&gt;.0, SwiftUI.Text)&gt;&gt;, SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Image, SwiftUI.Text)&gt;&gt;, SwiftUI.HStack&lt;SwiftUI.Image&gt;)&gt;&gt;)&gt;&gt; in Imagine_Scholar.PostView.body.getter : some"
+                  moduleName = "Imagine Scholar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/phila/Documents/Coding/XCode/Imagine%20Scholar/Imagine%20Scholar/Views/PostsView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "53"
+                  endingLineNumber = "53"
+                  offsetFromSymbolStart = "284">
+               </Location>
+               <Location
+                  uuid = "A2129219-98C2-4044-9BDA-9FFDF5D32B9F - 83f1b54622ce057c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; Swift.Optional&lt;SwiftUI._ConditionalContent&lt;SwiftUI._ConditionalContent&lt;&lt;&lt;opaque return type of SwiftUI.View.foregroundColor(Swift.Optional&lt;SwiftUI.Color&gt;) -&gt; some&gt;&gt;.0, SwiftUI.Image&gt;, SwiftUI.Image&gt;&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.buttonStyle&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.PrimitiveButtonStyle&gt;(&#x3c4;_1_0) -&gt; some&gt;&gt;.0, SwiftUI.Text)&gt; in closure #2 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.buttonStyle&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.PrimitiveButtonStyle&gt;(&#x3c4;_1_0) -&gt; some&gt;&gt;.0, SwiftUI.Text)&gt;&gt;, SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Image, SwiftUI.Text)&gt;&gt;, SwiftUI.HStack&lt;SwiftUI.Image&gt;)&gt; in closure #1 () -&gt; SwiftUI.TupleView&lt;(SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.clipShape&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.Shape&gt;(_: &#x3c4;_1_0, style: SwiftUI.FillStyle) -&gt; some&gt;&gt;.0, SwiftUI.Text, SwiftUI.Spacer, SwiftUI.Text)&gt;&gt;, SwiftUI.Text, SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.buttonStyle&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.PrimitiveButtonStyle&gt;(&#x3c4;_1_0) -&gt; some&gt;&gt;.0, SwiftUI.Text)&gt;&gt;, SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Image, SwiftUI.Text)&gt;&gt;, SwiftUI.HStack&lt;SwiftUI.Image&gt;)&gt;&gt;)&gt; in closure #1 () -&gt; SwiftUI.VStack&lt;SwiftUI.TupleView&lt;(SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.clipShape&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.Shape&gt;(_: &#x3c4;_1_0, style: SwiftUI.FillStyle) -&gt; some&gt;&gt;.0, SwiftUI.Text, SwiftUI.Spacer, SwiftUI.Text)&gt;&gt;, SwiftUI.Text, SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(&lt;&lt;opaque return type of SwiftUI.View.buttonStyle&lt;&#x3c4;_0_0 where &#x3c4;_1_0: SwiftUI.PrimitiveButtonStyle&gt;(&#x3c4;_1_0) -&gt; some&gt;&gt;.0, SwiftUI.Text)&gt;&gt;, SwiftUI.HStack&lt;SwiftUI.TupleView&lt;(SwiftUI.Image, SwiftUI.Text)&gt;&gt;, SwiftUI.HStack&lt;SwiftUI.Image&gt;)&gt;&gt;)&gt;&gt; in Imagine_Scholar.PostView.body.getter : some"
+                  moduleName = "Imagine Scholar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/phila/Documents/Coding/XCode/Imagine%20Scholar/Imagine%20Scholar/Views/PostsView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "53"
+                  endingLineNumber = "53"
+                  offsetFromSymbolStart = "444">
+               </Location>
+               <Location
+                  uuid = "A2129219-98C2-4044-9BDA-9FFDF5D32B9F - 33568294f2087777"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Imagine_Scholar.PostView.init(quotedPost: Swift.Optional&lt;Imagine_Scholar.Post&gt;, post: Imagine_Scholar.Post, user: Swift.Optional&lt;Imagine_Scholar.User&gt;) -&gt; Imagine_Scholar.PostView"
+                  moduleName = "Imagine Scholar"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/phila/Documents/Coding/XCode/Imagine%20Scholar/%3Ccompiler-generated%3E"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "28">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

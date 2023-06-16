@@ -6,16 +6,30 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct ContentView: View {
+    @State private var screen = "create"
+    @State private var loggedIn = false
+   
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        
+        NavigationView {
+            if loggedIn {
+                HomeView()
+            } else if screen == "login" {
+                LoginView(screen: $screen)
+            } else {
+                CreateAccountView(screen: $screen)
+            }
+            
         }
-        .padding()
+        .onAppear(perform: {
+            Auth.auth().addStateDidChangeListener { (auth, user) in
+                print("auth state just changed!")
+                loggedIn = user != nil
+            }
+        })
     }
 }
 
