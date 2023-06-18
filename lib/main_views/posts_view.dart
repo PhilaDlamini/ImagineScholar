@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:imaginine_scholar/main_views/quoted_post_view.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:intl/intl.dart';
 import '../models/Post.dart';
 
 class PostsView extends StatefulWidget {
@@ -37,10 +36,10 @@ class _PostsViewState extends State<PostsView> {
     });
 
     //attach listener to data
-    // ref.onChildAdded.listen((event) {
-    //     var data = event.snapshot.value as Map<String, dynamic>;
-    //     posts.add(Post.fromDict(data));
-    // });
+    ref.onChildAdded.listen((event) {
+        // var data = event.snapshot.value as Map<dynamic, dynamic>;
+        // posts.add(Post.fromDict(data));
+    });
 
     //TODO: sort posts
     // posts.postsort((a, b) => DateTime.parse(a.timestamp).compareTo(DateTime.parse(b.timestamp)));
@@ -95,73 +94,76 @@ class PostView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container (
-    child: Padding (
-      padding: EdgeInsets.only(top: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                backgroundImage: NetworkImage(post.authorURL),
-                maxRadius: 20,
-              ),
-              Padding(padding: EdgeInsets.only(left: 16),
-              child: Text(
-                post.author,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              ),
-              Spacer(),
-              Text(post.timestamp)
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 56, bottom: 8),
-            child: Text(post.content,
-              style: TextStyle(fontSize: 15),
-            ),
-          ),
-          if (post.quotedPostId != null) QuotedPostView(post.quotedPostId!),
-          Padding(
-            padding: EdgeInsets.only(left: 46),
-            child: Row(
+    return GestureDetector(
+      onTap: () {
+        print("tapped post ${post.content}");
+      },
+      child: Padding (
+        padding: EdgeInsets.only(top: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.heart_broken),
-                      onPressed: () {
-                        print("Love button clicked!");
-                      },
-                    ),
-                    Text("${post.likedURLs?.length ?? 0}")
-                  ],
+                CircleAvatar(
+                  backgroundImage: NetworkImage(post.authorURL),
+                  maxRadius: 20,
                 ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.comment),
-                      onPressed: () {
-                        print("Love button clicked!");
-                      },
-                    ),
-                    Text("${post.comments?.length ?? 0}")
-                  ],
+                Padding(padding: EdgeInsets.only(left: 16),
+                child: Text(
+                  post.author,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                IconButton(
-                  icon: Icon(Icons.repeat),
-                  onPressed: () {
-                    print("clicked to repost!");
-                  },
                 ),
+                Spacer(),
+                Text(post.timestamp)
               ],
             ),
-          )
-        ],
-      )
-    )
+            Padding(
+              padding: EdgeInsets.only(left: 56, bottom: 8),
+              child: Text(post.content,
+                style: TextStyle(fontSize: 15),
+              ),
+            ),
+            if (post.quotedPostId != null) QuotedPostView(post.quotedPostId!),
+            Padding(
+              padding: EdgeInsets.only(left: 46),
+              child: Row(
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.heart_broken),
+                        onPressed: () {
+                          print("Love button clicked!");
+                        },
+                      ),
+                      Text("${post.likedURLs?.length ?? 0}")
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.comment),
+                        onPressed: () {
+                          print("Love button clicked!");
+                        },
+                      ),
+                      Text("${post.comments?.length ?? 0}")
+                    ],
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.repeat),
+                    onPressed: () {
+                      print("clicked to repost!");
+                    },
+                  ),
+                ],
+              ),
+            )
+          ],
+        )
+      ),
     );
   }
 }
