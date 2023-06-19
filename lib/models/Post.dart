@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 class Post {
@@ -38,6 +39,28 @@ class Post {
       'content': content,
       'timestamp': timestamp.toString()
     };
+  }
+
+  //Returns a readable data
+  String getDisplayTime() {
+    String val = "";
+
+    //Calculate the date
+    DateTime dateTime = DateTime.parse(timestamp);
+    Duration diff = DateTime.now().difference(dateTime);
+
+    if(diff.inDays > 7) {
+      val = DateFormat.yMd().format(dateTime);
+    } else if (diff.inDays >= 1) {
+      val = "${diff.inDays} d";
+    } else if(diff.inHours >= 1) {
+      val = "${diff.inHours} hr";
+    } else if(diff.inMinutes >= 1) {
+      val = "${diff.inMinutes} min";
+    } else {
+      val = "${diff.inSeconds} sec";
+    }
+    return val;
   }
 }
 

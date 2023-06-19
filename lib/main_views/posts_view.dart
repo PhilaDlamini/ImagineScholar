@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:imaginine_scholar/main_views/post_details_view.dart';
 import 'package:imaginine_scholar/main_views/quoted_post_view.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../models/Post.dart';
@@ -94,9 +95,12 @@ class PostView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
-        print("tapped post ${post.content}");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PostDetailsView(post)),
+        );
       },
       child: Padding (
         padding: EdgeInsets.only(top: 16),
@@ -116,7 +120,7 @@ class PostView extends StatelessWidget {
                 ),
                 ),
                 Spacer(),
-                Text(post.timestamp)
+                Text(post.getDisplayTime())
               ],
             ),
             Padding(

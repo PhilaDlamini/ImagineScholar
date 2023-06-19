@@ -69,7 +69,7 @@ class _QuotedPostViewState extends State<QuotedPostView> {
                           ),
                           Padding(
                               padding: const EdgeInsets.only(left: 5),
-                              child: Text(post.timestamp))
+                              child: Text(post.getDisplayTime()))
                         ],
                       ),
                       Text(
