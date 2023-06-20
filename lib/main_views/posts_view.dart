@@ -1,25 +1,33 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:imaginine_scholar/SharedPref.dart';
 import 'package:imaginine_scholar/main_views/post_details_view.dart';
 import 'package:imaginine_scholar/main_views/quoted_post_view.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../models/Post.dart';
+import '../models/User.dart' as our;
+import 'create_posts_view.dart';
 
 class PostsView extends StatefulWidget {
   const PostsView({super.key});
+
   @override
   State<StatefulWidget> createState() => _PostsViewState();
 }
 
 class _PostsViewState extends State<PostsView> {
   List<Post> posts = [];
+  our.User? user;
 
   @override
   void initState() {
     super.initState();
-    var ref = FirebaseDatabase.instance.ref();
+    //load the user
+    loadUser();
 
-    //read the lists of posts
+    //Fetch all current posts
+    var ref = FirebaseDatabase.instance.ref();
     ref.child('posts').get().then((snapshot) {
       if (snapshot.value != null) {
         for (var child in snapshot.children) {
@@ -27,39 +35,71 @@ class _PostsViewState extends State<PostsView> {
           var post = Post.fromDict(postData);
           posts.insert(0, post);
         }
-      } else {
-        // Data does not exist at the specified path
-        print('No data found');
       }
-    }).catchError((error) {
-      // Handle any errors that occur during the read operation
-      print('Error reading data: $error');
+    });
+    posts.sort((a, b) =>
+          DateTime.parse(a.timestamp).compareTo(DateTime.parse(b.timestamp)));
+
+    //Listen for post updates
+    ref.child('posts').onChildChanged.listen((event) {
+      var postData = event.snapshot.value as Map<dynamic, dynamic>;
+      var post = Post.fromDict(postData);
+      setState(() {
+        posts.removeWhere((e) => e.id == post.id);
+        posts.add(post);
+      });
     });
 
-    //attach listener to data
-    ref.onChildAdded.listen((event) {
-        // var data = event.snapshot.value as Map<dynamic, dynamic>;
-        // posts.add(Post.fromDict(data));
+    ref.child('posts').onChildRemoved.listen((event) {
+      var postData = event.snapshot.value as Map<dynamic, dynamic>;
+      var post = Post.fromDict(postData);
+      setState(() {
+        posts.removeWhere((e) => e.id == post.id);
+      });
     });
 
-    //TODO: sort posts
-    // posts.postsort((a, b) => DateTime.parse(a.timestamp).compareTo(DateTime.parse(b.timestamp)));
+    ref.child('posts').onChildAdded.listen((event) {
+      var postData = event.snapshot.value as Map<dynamic, dynamic>;
+      var post = Post.fromDict(postData);
+      setState(() {
+        posts.removeWhere((e) => e.id == post.id);
+        posts.add(post);
+      });
+    });
+  }
+
+  //Loads the user
+  void loadUser() async {
+    try {
+      our.User load = our.User.fromJson(await SharedPref.read('user'));
+      setState(() {
+        user = load;
+        print("loaded user! uid is ${user!.uid}");
+      });
+    } on Exception {
+      print("Error loading user");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Posts"),
+        title: const Text("Posts"),
         actions: [
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
-              print("Adding a new post!");
-          },
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        CreatePostView(user as our.User, null)),
+              );
+            },
           ),
           IconButton(
-            icon: Icon(Icons.opacity),
+            icon: const Icon(Icons.opacity),
             onPressed: () {
               print("Going to opportunities view");
             },
@@ -67,21 +107,12 @@ class _PostsViewState extends State<PostsView> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Center(
-            child: ListView.separated(
+            child: ListView.builder(
                 itemCount: posts.length,
-                separatorBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: EdgeInsets.only(top: 8),
-                    child: Container(
-                      height: 1,
-                      color: Colors.grey,
-                    ),
-                  );
-                },
                 itemBuilder: (BuildContext context, int index) {
-                  return PostView(posts[index]);
+                  return PostView(posts[index], user as our.User);
                 })),
       ),
     );
@@ -90,8 +121,59 @@ class _PostsViewState extends State<PostsView> {
 
 //Displays the actual post itself
 class PostView extends StatelessWidget {
+  final our.User user;
   final Post post;
-  PostView(this.post, {super.key});
+
+  const PostView(this.post, this.user, {super.key});
+
+  //Returns the hear icon
+  Icon getHeartIcon() {
+    if (post.likes == null || !post.likes!.contains(user!.uid)) {
+      return const Icon(Icons.favorite_border);
+    }
+    return const Icon(Icons.favorite, color: Colors.red);
+  }
+
+  //Updates the like
+  void _updateLike() {
+    var ref = FirebaseDatabase.instance.ref().child('posts');
+    List<String> likes = post.likes ?? [];
+    List<String> likedUrls = post.likedURLs ?? [];
+
+    //Send like if not liked
+    if (!likes.contains(user.uid)) {
+      likes.add(user.uid);
+      likedUrls.add(user.imageURL);
+
+      ref.child(post.id).child('likes').set(likes).then((_) {
+        print("sent like");
+      }).catchError((error) {
+        print("Error sending like");
+      });
+
+      ref.child(post.id).child('likedURLs').set(likedUrls).then((_) {
+        print("sent liked urls");
+      }).catchError((error) {
+        print("Error sending like url");
+      });
+    } else {
+      //Remove likes
+      likedUrls.remove(user.imageURL);
+      likes.remove(user.uid);
+
+      ref.child(post.id).child('likes').set(likes).then((_) {
+        print("removed like");
+      }).catchError((error) {
+        print("Error removing like");
+      });
+
+      ref.child(post.id).child('likedURLs').set(likedUrls).then((_) {
+        print("removed liked urls");
+      }).catchError((error) {
+        print("Error removing like url");
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,75 +181,84 @@ class PostView extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => PostDetailsView(post)),
+          MaterialPageRoute(builder: (context) => PostDetailsView(post, user)),
         );
       },
-      child: Padding (
-        padding: EdgeInsets.only(top: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(post.authorURL),
-                  maxRadius: 20,
-                ),
-                Padding(padding: EdgeInsets.only(left: 16),
-                child: Text(
-                  post.author,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                ),
-                Spacer(),
-                Text(post.getDisplayTime())
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 56, bottom: 8),
-              child: Text(post.content,
-                style: TextStyle(fontSize: 15),
-              ),
-            ),
-            if (post.quotedPostId != null) QuotedPostView(post.quotedPostId!),
-            Padding(
-              padding: EdgeInsets.only(left: 46),
-              child: Row(
+      child: Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.heart_broken),
-                        onPressed: () {
-                          print("Love button clicked!");
-                        },
-                      ),
-                      Text("${post.likedURLs?.length ?? 0}")
-                    ],
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(post.authorURL),
+                    maxRadius: 20,
                   ),
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.comment),
-                        onPressed: () {
-                          print("Love button clicked!");
-                        },
-                      ),
-                      Text("${post.comments?.length ?? 0}")
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: Text(
+                      post.author,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.repeat),
-                    onPressed: () {
-                      print("clicked to repost!");
-                    },
-                  ),
+                  const Spacer(),
+                  Text(post.getDisplayTime())
                 ],
               ),
-            )
-          ],
-        )
-      ),
+              Padding(
+                padding: const EdgeInsets.only(left: 56, bottom: 8),
+                child: Text(
+                  post.content,
+                  style: const TextStyle(fontSize: 15),
+                ),
+              ),
+              if (post.quotedPostId != null)
+                Padding(
+                  padding: EdgeInsets.only(left: 50),
+                  child: QuotedPostView(post.quotedPostId!),
+                ),
+              Padding(
+                padding: const EdgeInsets.only(left: 46),
+                child: Row(
+                  children: [
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: getHeartIcon(),
+                          onPressed: _updateLike,
+                        ),
+                        Text("${post.likedURLs?.length ?? 0}")
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.comment),
+                          onPressed: () {
+                            print("Love button clicked!");
+                          },
+                        ),
+                        Text("${post.comments?.length ?? 0}")
+                      ],
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.repeat_rounded),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  CreatePostView(user, post)),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              )
+            ],
+          )),
     );
   }
 }

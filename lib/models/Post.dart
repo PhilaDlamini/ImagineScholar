@@ -31,13 +31,14 @@ class Post {
     return post;
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
       'author': author,
       'authorURL': authorURL,
       'content': content,
-      'timestamp': timestamp.toString()
+      'timestamp': timestamp.toString(),
+      'quotedPostId': quotedPostId
     };
   }
 
@@ -84,6 +85,17 @@ class PostComment {
     comment.id = data['id'];
     return comment;
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'author': author,
+      'imageURL': imageURL,
+      'content': content,
+      'responses': null //NULL for now
+    };
+  }
+
 }
 
 class PostCommentResponse {

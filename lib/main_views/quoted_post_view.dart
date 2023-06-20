@@ -42,43 +42,40 @@ class _QuotedPostViewState extends State<QuotedPostView> {
   Widget build(BuildContext context) {
     return post == null
         ? Container() //wait till ready
-        : Padding(
-            padding: const EdgeInsets.only(left: 50, top: 10),
-            child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(width: 1),
-                    borderRadius: BorderRadius.circular(10)),
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+        : Container(
+            decoration: BoxDecoration(
+                border: Border.all(width: 1),
+                borderRadius: BorderRadius.circular(10)),
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            backgroundImage: NetworkImage(post.authorURL),
-                            maxRadius: 10,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: Text(
-                              post.author,
-                              style: const TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Padding(
-                              padding: const EdgeInsets.only(left: 5),
-                              child: Text(post.getDisplayTime()))
-                        ],
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(post.authorURL),
+                        maxRadius: 10,
                       ),
-                      Text(
-                        post.content,
-                        style: const TextStyle(fontSize: 15),
-                      )
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Text(
+                          post.author,
+                          style: const TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.only(left: 5),
+                          child: Text(post.getDisplayTime()))
                     ],
                   ),
-                )),
-          );
+                  Text(
+                    post.content,
+                    style: const TextStyle(fontSize: 15),
+                  )
+                ],
+              ),
+            ));
   }
 }

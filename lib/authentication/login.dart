@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:imaginine_scholar/SharedPref.dart';
+import '../models/User.dart' as our;
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -14,7 +17,6 @@ class _LoginState extends State<Login> {
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-
   //Logs in the user
   void _logIn() async {
     try {
@@ -22,9 +24,19 @@ class _LoginState extends State<Login> {
       UserCredential userCredential = await auth.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
       if (userCredential.user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("logged in")));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("logged in")));
+
+        //TODO: move to CreateAccountView
+        //saves the current user information to user defaults
+        User user = auth.currentUser!;
+        var ref = FirebaseDatabase.instance.ref();
+        ref.child('users').child(user.uid).get().then((snapshot) {
+          if (snapshot.value != null) {
+            var userData = snapshot.value as Map<dynamic, dynamic>;
+            our.User currUser = our.User.fromJson(userData);
+            SharedPref.save('user', currUser);
+            print("saved user info");
+          }
+        });
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error signing in anonymously: $e')));
