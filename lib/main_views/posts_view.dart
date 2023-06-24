@@ -1,16 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:imaginine_scholar/SharedPref.dart';
 import 'package:imaginine_scholar/main_views/post_details_view.dart';
 import 'package:imaginine_scholar/main_views/quoted_post_view.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../models/Post.dart';
-import '../models/User.dart' as our;
 import 'create_posts_view.dart';
+import '../models/User.dart' as our;
 
 class PostsView extends StatefulWidget {
-  const PostsView({super.key});
+  final our.User user;
+  const PostsView(this.user, {super.key});
 
   @override
   State<StatefulWidget> createState() => _PostsViewState();
@@ -18,13 +18,10 @@ class PostsView extends StatefulWidget {
 
 class _PostsViewState extends State<PostsView> {
   List<Post> posts = [];
-  our.User? user;
 
   @override
   void initState() {
     super.initState();
-    //load the user
-    loadUser();
 
     //Fetch all current posts
     var ref = FirebaseDatabase.instance.ref();
@@ -68,19 +65,6 @@ class _PostsViewState extends State<PostsView> {
     });
   }
 
-  //Loads the user
-  void loadUser() async {
-    try {
-      our.User load = our.User.fromJson(await SharedPref.read('user'));
-      setState(() {
-        user = load;
-        print("loaded user! uid is ${user!.uid}");
-      });
-    } on Exception {
-      print("Error loading user");
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,7 +78,7 @@ class _PostsViewState extends State<PostsView> {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        CreatePostView(user as our.User, null)),
+                        CreatePostView(widget.user, null)),
               );
             },
           ),
@@ -112,7 +96,7 @@ class _PostsViewState extends State<PostsView> {
             child: ListView.builder(
                 itemCount: posts.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return PostView(posts[index], user as our.User);
+                  return PostView(posts[index], widget.user);
                 })),
       ),
     );
