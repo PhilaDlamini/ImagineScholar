@@ -32,6 +32,8 @@ class _CreateEventState extends State<CreateEventsView> {
       descriptionController.text,
       widget.user.imageURL,
       eventDate!.toIso8601String(), //TODO: combine with time
+      null,
+      null,
       null
     );
 

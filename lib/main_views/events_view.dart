@@ -28,6 +28,7 @@ class EventsViewState extends State<EventsView> {
         for (var child in snapshot.children) {
           var eventData = child.value as Map<dynamic, dynamic>;
           var event = Event.fromDict(eventData);
+          events.removeWhere((e) => e.id == event.id);
           events.insert(0, event);
         }
       }
@@ -72,7 +73,8 @@ class EventsViewState extends State<EventsView> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CreateEventsView(widget.user)),
+                MaterialPageRoute(
+                    builder: (context) => CreateEventsView(widget.user)),
               );
             },
           )
@@ -84,29 +86,88 @@ class EventsViewState extends State<EventsView> {
             child: ListView.builder(
                 itemCount: events.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return EventView(events[index]);
+                  return EventView(events[index], widget.user);
                 })),
       ),
     );
   }
 }
 
-class EventView extends StatefulWidget {
+class EventView extends StatelessWidget {
   Event event;
-  EventView(this.event, {super.key});
+  User user;
+  EventView(this.event, this.user, {super.key});
 
-  @override
-  State<StatefulWidget> createState() => _EventViewState();
-}
+  Icon getMailIcon() {
+    if (event.rsvpd == null || !event.rsvpd!.contains(user.uid)) {
+      return const Icon(Icons.mail);
+    }
+    return const Icon(Icons.mail, color: Colors.blueAccent);
+  }
 
-class _EventViewState extends State<EventView> {
+  //Updates rsvps
+  void _updateRVSPs() {
+    var ref = FirebaseDatabase.instance.ref().child('events');
+    List<String> rsvpd = event.rsvpd ?? [];
+    List<String> rsvpdURLs = event.rsvpdURLs ?? [];
+    List<String> rsvpdNames = event.rsvpdNames ?? [];
+
+    if (!rsvpd.contains(user.uid)) {
+      rsvpd.add(user.uid);
+      rsvpdNames.add(user.name);
+      rsvpdURLs.add(user.imageURL);
+
+      ref.child(event.id).child('rsvpd').set(rsvpd).then((_) {
+        print("sent rsvp");
+      }).catchError((error) {
+        print("Error sending rsvp");
+      });
+
+      ref.child(event.id).child('rsvpdNames').set(rsvpdNames).then((_) {
+        print("sent rsvpd name");
+      }).catchError((error) {
+        print("Error sending rsvpd names");
+      });
+
+      ref.child(event.id).child('rsvpdURLs').set(rsvpdURLs).then((_) {
+        print("sent rsvpd urls");
+      }).catchError((error) {
+        print("Error sending rsvpd urls");
+      });
+    } else {
+      //Remove likes
+      rsvpdURLs.remove(user.imageURL);
+      rsvpd.remove(user.uid);
+      rsvpdNames.remove(user.name);
+
+      ref.child(event.id).child('rsvpd').set(rsvpd).then((_) {
+        print("removed rsvp");
+      }).catchError((error) {
+        print("Error removing rsvp");
+      });
+
+      ref.child(event.id).child('rsvpdNames').set(rsvpdNames).then((_) {
+        print("removed rsvp name");
+      }).catchError((error) {
+        print("Error removing names");
+      });
+
+      ref.child(event.id).child('rsvpdURLs').set(rsvpdURLs).then((_) {
+        print("removed rsvp URL");
+      }).catchError((error) {
+        print("Error removing rsvp URL");
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => EventDetailsView(widget.event)),
+          MaterialPageRoute(
+              builder: (context) => EventDetailsView(event)),
         );
       },
       child: Row(
@@ -117,10 +178,11 @@ class _EventViewState extends State<EventView> {
             child: Column(
               children: [
                 CircleAvatar(
-                  backgroundImage: NetworkImage(widget.event.authorURL),
+                  backgroundImage: NetworkImage(event.authorURL),
                   maxRadius: 20,
                 ),
-                Container( //TODO: remove hard-coded height
+                Container(
+                  //TODO: remove hard-coded height
                   color: Colors.blueGrey,
                   width: 1,
                   height: 90,
@@ -134,25 +196,28 @@ class _EventViewState extends State<EventView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.event.name,
-                  style:
-                      const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  event.name,
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
-                  child: Text(widget.event.description,
-                  style:
-                      const TextStyle(fontSize: 16),
+                  child: Text(
+                    event.description,
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 8),
                   child: Row(
                     children: [
-                      Icon(Icons.email),
+                      IconButton(
+                          icon: getMailIcon(),
+                          onPressed: _updateRVSPs,
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
-                        child: Text("${widget.event.rsvpd?.length ?? 0}"),
+                        child: Text("${event.rsvpd?.length ?? 0}"),
                       )
                     ],
                   ),

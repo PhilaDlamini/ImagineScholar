@@ -97,14 +97,14 @@ class _PostDetailsState extends State<PostDetailsView>{
               ),
               Row(
                 children: [
-                  Text("Liked by ${widget.post.likes?.length ?? 0} people")
+                  Text(widget.post.getLikedByText())
                 ],
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 16, bottom: 16),
                 child: Container(
                   height: 1,
-                  color: Colors.blueGrey,
+                  color: Colors.grey,
                 ),
               ),
               if (widget.post.comments != null)

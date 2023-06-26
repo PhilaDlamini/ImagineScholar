@@ -10,8 +10,29 @@ class Event {
   String authorURL;
   String date;
   List<String>? rsvpd; //list of users who rsvpd
+  List<String>? rsvpdNames; //their names
+  List<String>? rsvpdURLs; //their images
 
-  Event(this.name, this.location, this.description, this.authorURL, this.date, this.rsvpd);
+  Event(this.name, this.location, this.description, this.authorURL, this.date,
+      this.rsvpd, this.rsvpdNames, this.rsvpdURLs);
+
+  String getGoingText() {
+    var num = rsvpd?.length ?? 0;
+    if(num == 0) {
+      return "No one is going";
+    } else if(num == 1) {
+      return "1 person is going";
+    }
+    return "$num people are going";
+  }
+
+  String getDisplayTime() {
+    return "time";
+  }
+
+  String getDisplayDate() {
+    return "date";
+  }
 
   static fromDict(Map<dynamic, dynamic> data) {
     var event = Event(
@@ -21,6 +42,8 @@ class Event {
       data['authorURL'],
       data['date'],
       data['rsvpd']?.toList().cast<String>(),
+      data['rsvpdNames']?.toList().cast<String>(),
+      data['rsvpdURLs']?.toList().cast<String>(),
     );
     event.id = data['id'];
     return event;
@@ -34,7 +57,9 @@ class Event {
       'description': description,
       'authorURL': authorURL,
       'date': date,
-      'rsvpd': rsvpd
+      'rsvpd': rsvpd,
+      'rsvpdNames': rsvpdNames,
+      'rsvpdURLs': rsvpdURLs
     };
   }
 }
