@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:imaginine_scholar/main_views/announcements_view.dart';
 import 'package:imaginine_scholar/main_views/forums_view.dart';
 import 'package:imaginine_scholar/main_views/posts_view.dart';
-
+import 'package:imaginine_scholar/SharedPref.dart';
+import '../models/User.dart' as our;
 import 'main_views/chats_view.dart';
 import 'main_views/events_view.dart';
 
@@ -15,21 +16,36 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  List<Widget> pages = <Widget>[
-    PostsView(),
-    EventsView(),
-    ChatsView(),
-    AnnouncementsView(),
-    ForumsView()
-  ];
+  List<Widget> pages = [];
+  our.User? user;
 
-  //updates the selected item
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-      // pages.elementAt(index).(); reinit state there?
-    });
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
   }
+
+  //Loads the user
+  void loadUser() async {
+    try {
+      our.User load = our.User.fromJson(await SharedPref.read('user'));
+      setState(() {
+        user = load;
+        print("loaded user! uid is ${user!.uid}");
+
+        pages = <Widget>[
+          PostsView(load),
+          EventsView(load),
+          ChatsView(),
+          AnnouncementsView(),
+          ForumsView()
+        ];
+      });
+    } on Exception {
+      print("Error loading user");
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +54,11 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
         items: const <BottomNavigationBarItem> [
           BottomNavigationBarItem(
             icon: Icon(Icons.pages),
@@ -50,7 +70,7 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.send_and_archive_sharp),
-            label: 'Events',
+            label: 'Chats',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.wifi_tethering),

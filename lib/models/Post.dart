@@ -16,6 +16,16 @@ class Post {
   Post(this.author, this.authorURL, this.content, this.comments, this.likes,
       this.likedURLs, this.quotedPostId);
 
+  String getLikedByText() {
+    var num = likes?.length ?? 0;
+    if(num == 0) {
+      return "No likes";
+    } else if(num == 1) {
+      return "Liked by 1 person";
+    }
+    return "Liked by $num people";
+  }
+
   static fromDict(Map<dynamic, dynamic> data) {
     var post = Post(
       data['author'],

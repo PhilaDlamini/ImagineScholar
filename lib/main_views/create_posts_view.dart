@@ -22,7 +22,6 @@ class _CreatePostState extends State<CreatePostView> {
 
   //Writes the post
   void _post() {
-    print("qouted: ${widget.quotedPost?.id}");
     //post
     var ref = FirebaseDatabase.instance.ref();
     Post post = Post(
