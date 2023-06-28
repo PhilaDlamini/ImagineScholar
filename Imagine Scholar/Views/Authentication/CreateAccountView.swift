@@ -164,7 +164,7 @@ struct CreateAccountView: View {
                             } else {
                                 
                                 //save the user information
-                                let user = User(uid: currentUser.uid, name: name, email: email, type: accountType, imageURL: url!)
+                                let user = User(uid: currentUser.uid, name: name, email: email, type: accountType, imageURL: url!.absoluteString)
                                 
                                 let ref = Database.database().reference()
                                 ref.child("users").child(user.uid).setValue(try! user.getDict()) {(error, ref) in

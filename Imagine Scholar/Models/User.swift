@@ -12,7 +12,7 @@ struct User: Codable {
     var name: String
     var email: String
     var type: String //one of ["Student", "Facilitator", "Alumni"]
-    var imageURL: URL
+    var imageURL: String
     
     //add more here as needed
 }

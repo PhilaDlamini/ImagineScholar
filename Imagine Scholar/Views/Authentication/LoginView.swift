@@ -94,6 +94,8 @@ struct LoginView: View {
                        }
             } else {
                 screen = "create"
+                
+                //TODO: update user info in user defaults
             }
             
         }

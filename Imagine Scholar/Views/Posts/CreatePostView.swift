@@ -22,7 +22,7 @@ struct CreatePostView: View {
                 
                 HStack {
                     
-                    AsyncImage(url: user.imageURL) {phase in
+                    AsyncImage(url: URL(string: user.imageURL)) {phase in
                         
                         if let image = phase.image {
                             image
@@ -73,9 +73,9 @@ struct CreatePostView: View {
         
         //save the data
         if let user = user {
-            let post = Post(author: user.name, authorURL: user.imageURL, content: text,  comments: nil, likes: nil, likedURLs: nil, quotedPostId: quotedPost?.id.uuidString ?? nil)
+            let post = Post(author: user.name, authorURL: user.imageURL, content: text,  comments: nil, likes: nil, likedURLs: nil, quotedPostId: quotedPost?.id ?? nil)
             
-            ref.child("posts").child(post.id.uuidString).setValue(try! post.getDict()) {(error, ref) in
+            ref.child("posts").child(post.id).setValue(try! post.getDict()) {(error, ref) in
                 if let error = error {
                     print("Error posting! \(error.localizedDescription)")
                 } else {
@@ -90,7 +90,7 @@ struct CreatePostView: View {
 
 struct CreatePostView_Previews: PreviewProvider {
     static var previews: some View {
-        CreatePostView(quotedPost: Post(author: "Phila", authorURL: URL(string: "https://www.google.com")!, content: "Hey haha"))
+        CreatePostView(quotedPost: Post(author: "Phila", authorURL:  "https://www.google.com", content: "Hey haha"))
     }
 }
 

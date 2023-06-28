@@ -9,46 +9,6 @@ import SwiftUI
 import FirebaseDatabase
 import Firebase
 
-//Displays a quoted post in the view
-struct QuotedPostView: View {
-    var post: Post
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                AsyncImage(url: post.authorURL) {phase in
-                    
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    } else if phase.error != nil {
-                        Color.red
-                    } else {
-                        ProgressView()
-                    }
-                }
-                .frame(width: 20, height: 20)
-                .clipShape(Circle())
-                
-                Text(post.author)
-                    .font(.headline)
-                
-                Text(post.timestamp.formatted(date: .omitted, time: .shortened))
-                    .font(.subheadline)
-                Spacer()
-            }
-            Text(post.content)
-        }
-        .padding()
-        .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(lineWidth: 1)
-                .fill(.gray)
-        )
-    }
-}
-
 //Displays the post in the listview
 struct PostView: View {
     @State var quotedPost: Post? = nil
@@ -63,7 +23,7 @@ struct PostView: View {
                 
                 HStack {
                     
-                    AsyncImage(url: post.authorURL) {phase in
+                    AsyncImage(url: URL(string: post.authorURL)) {phase in
                         
                         if let image = phase.image {
                             image
@@ -81,7 +41,7 @@ struct PostView: View {
                     Text(post.author)
                         .font(.headline)
                     Spacer()
-                    Text(post.timestamp.formatted(date: .omitted, time: .shortened))
+                    Text(post.displayDate)
                     
                 }
                 
@@ -162,7 +122,7 @@ struct PostView: View {
             if likes.contains(user.uid) {
                 
                 likes.removeAll {$0 == user.uid}
-                ref.child(post.id.uuidString).child("likes").setValue(likes) {err, _ in
+                ref.child(post.id).child("likes").setValue(likes) {err, _ in
                     if let err = err {
                         print("Error removing like! \(err.localizedDescription)")
                     } else {
@@ -171,8 +131,8 @@ struct PostView: View {
                 }
                 
                 var likedURLs = post.likedURLs!
-                likedURLs.removeAll{$0 == user.imageURL.absoluteString}
-                ref.child(post.id.uuidString).child("likedURLs").setValue(likedURLs) {err, _ in
+                likedURLs.removeAll{$0 == user.imageURL}
+                ref.child(post.id).child("likedURLs").setValue(likedURLs) {err, _ in
                     if let err = err {
                         print("Error removing author url! \(err.localizedDescription)")
                     } else {
@@ -184,7 +144,7 @@ struct PostView: View {
                 
                 //Else, send like
                 likes.append(user.uid)
-                ref.child(post.id.uuidString).child("likes").setValue(likes) {err, _ in
+                ref.child(post.id).child("likes").setValue(likes) {err, _ in
                     if let err = err {
                         print("Error adding like! \(err.localizedDescription)")
                     } else {
@@ -193,8 +153,8 @@ struct PostView: View {
                 }
                 
                 var likedURLs = post.likedURLs ?? []
-                likedURLs.append(user.imageURL.absoluteString)
-                ref.child(post.id.uuidString).child("likedURLs").setValue(likedURLs) {err, _ in
+                likedURLs.append(user.imageURL)
+                ref.child(post.id).child("likedURLs").setValue(likedURLs) {err, _ in
                     if let err = err {
                         print("Error adding url! \(err.localizedDescription)")
                     } else {
@@ -212,23 +172,52 @@ struct PostsView: View {
     let ref = Database.database().reference().child("posts")
 
     var body: some View {
-        List(posts) { post in
-            PostView(post: post, user: user)
+        NavigationView {
+            List(posts) { post in
+                PostView(post: post, user: user)
                 
-        }
-        .onAppear{
-            
-            //load the user
-            if let userData = UserDefaults.standard.data(forKey: "user") {
-                if let usr = try? JSONDecoder().decode(User.self, from: userData) {
-                    user = usr
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigation) {
+                    HStack {
+                        Image(systemName: "airplane.circle.fill")
+                        Text("Posts")
+                            .font(.headline)
+                    }
                 }
+                
+                ToolbarItem(placement: .primaryAction) {
+                    NavigationLink(destination: CreatePostView(quotedPost: nil)) {
+                        Label("New Post", systemImage: "plus.circle")
+                    }
+                }
+                
+                ToolbarItem(placement: .secondaryAction) {
+                    NavigationLink(destination: OpportunitiesView()) {
+                        Label("Ops", systemImage: "o.circle.fill")
+                    }
+                }
+//                ToolbarItem { //TODO: --> remove
+//                    Button("log out") {
+//                        try! Auth.auth().signOut()
+//                        //                        var user = getUser()
+//                    }
+//                }
+            }
+            .onAppear{
+                
+                //load the user
+                if let userData = UserDefaults.standard.data(forKey: "user") {
+                    if let usr = try? JSONDecoder().decode(User.self, from: userData) {
+                        user = usr
+                    }
+                }
+                
+                //attach listeners
+                attachListeners()
             }
             
-            //attach listeners
-            attachListeners()
         }
-        
     }
     
     //Listens for changes to the post

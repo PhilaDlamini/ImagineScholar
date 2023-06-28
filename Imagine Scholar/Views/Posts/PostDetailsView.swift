@@ -24,7 +24,7 @@ struct PostDetailsView: View {
             ScrollView {
                 VStack(alignment: .leading) {
                     HStack {
-                        AsyncImage(url: post.authorURL) {phase in
+                        AsyncImage(url: URL(string: post.authorURL)) {phase in
                             
                             if let image = phase.image {
                                 image
@@ -43,7 +43,7 @@ struct PostDetailsView: View {
                             Text(post.author)
                                 .font(.headline)
                             
-                            Text(post.timestamp.formatted(date: .omitted, time: .shortened))
+                            Text(post.displayDate)
                         }
                         
                     }
@@ -168,7 +168,7 @@ struct PostDetailsView: View {
             
             //attach an observer to monitor changes to this post (TODO: same issue as before: needs to filter comments by id so to avoid duplicates)
             let ref = Database.database().reference()
-            ref.child("posts").child(post.id.uuidString).observe(.value) {snapshot in
+            ref.child("posts").child(post.id).observe(.value) {snapshot in
                 for _ in snapshot.children {
                     if let postData = snapshot.value as? [String: Any] {
                         let updatedPost: Post = try! Post.fromDict(dictionary: postData)
@@ -184,7 +184,7 @@ struct PostDetailsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if let user = user {
-                if user.imageURL.absoluteString == post.authorURL.absoluteString { //TODO: need a stronger  way to authenticate here
+                if user.imageURL == post.authorURL { //TODO: need a stronger  way to authenticate here
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button{
                             deletePost()
@@ -197,11 +197,11 @@ struct PostDetailsView: View {
         }
     }
     
-    func normal(author: String, content: String, image: URL) -> some View {
+    func normal(author: String, content: String, image: String) -> some View {
         return VStack(alignment: .leading, spacing: 0) {
             HStack {
                 
-                AsyncImage(url: image) {phase in
+                AsyncImage(url: URL(string: image)) {phase in
                     
                     if let image = phase.image {
                         image
@@ -238,7 +238,7 @@ struct PostDetailsView: View {
             }
             
             let ref = Database.database().reference()
-            ref.child("posts").child(post.id.uuidString).child("comments").setValue(coms) {err, _ in
+            ref.child("posts").child(post.id).child("comments").setValue(coms) {err, _ in
                 if let err = err {
                     print("Error adding comment! \(err.localizedDescription)")
                 } else {
@@ -258,7 +258,7 @@ struct PostDetailsView: View {
     //deletes the post
     func deletePost() {
         let ref = Database.database().reference()
-        ref.child("posts").child(post.id.uuidString).removeValue()
+        ref.child("posts").child(post.id).removeValue()
         dismiss()
     }
     
@@ -271,13 +271,3 @@ struct PostDetailsView: View {
         post = newPost
     }
 }
-
-//struct PostDetailsView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        PostDetailsView(post: Post(author: "Megan", authorURL: URL(string: "fake link")!, content: "Hi all, I'm loving this new movie about the business of selling cupcakes. I will be starting my own brownie business so please come along for the love"))
-//    }
-//}
-
-//
-//PostComment(author: "Lucky", authorUID: "someID", content: "I think I love!", responses: [PostCommentResponse(author: "Queen", authorUID: "some ID", content: "I agree!")])  [PostComment(author: "Phila", authorUID: "someID", content: "Oh yes, I love this!", responses: [PostCommentResponse(author: "Queen", authorUID: "some ID", content: "I agree!")])
-//, comments: [PostComment(author: "Noxolo", authorUID: "someID", content: "Go off sis! I love a business queen"),  PostComment(author: "Noxolo", authorUID: "someID", content: "Adding another comment becuase this is so cool!")]
