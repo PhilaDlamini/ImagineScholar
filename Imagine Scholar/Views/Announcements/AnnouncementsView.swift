@@ -6,44 +6,132 @@
 //
 
 import SwiftUI
+import FirebaseDatabase
+import Firebase
 
 struct AnnouncementView : View {
+    var user: User?
     let announcement: Announcement
     
     var body : some View {
-        VStack(alignment: .leading, spacing: 20) {
-            
-            HStack {
-                Circle()
-                    .fill(.gray)
+        NavigationLink(destination: AnnouncementDetailsView(announcement: announcement, user: user)){
+            VStack(alignment: .leading, spacing: 20) {
+                HStack {
+                    AsyncImage(url: URL(string: announcement.authorURL)) {phase in
+                        
+                        if let image = phase.image {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        } else if phase.error != nil {
+                            Color.red
+                        } else {
+                            ProgressView()
+                        }
+                    }
                     .frame(width: 50, height: 50)
-                
-                VStack(alignment: .leading){
-                    Text(announcement.author)
-                        .font(.headline)
-                    Text("38 min ago")
+                    .clipShape(Circle())
+                    
+                    VStack(alignment: .leading){
+                        Text(announcement.author)
+                            .font(.headline)
+                        Text(announcement.postedDate)
+                    }
                 }
-            }
-            
-            Text(announcement.content)
-            
-            Button {
                 
-            } label: {
-                Label("Follow up", systemImage: "questionmark.square.dashed")
+                Text(announcement.content)
+                
+                if let followUps = announcement.followups {
+                    HStack {
+                        Image(systemName: "questionmark.app")
+                        Text("\(followUps.count) follow ups")
+                            .font(.subheadline)
+                    }
+                }
             }
         }
     }
 }
 
 struct AnnouncementsView: View {
-    let announcements = [Announcement(author: "Megan Nellis", content: "Remember to grab bottles before you leave!"),
-        Announcement(author: "Megan O'Neill", content: "We just got more books for tomorrow's readng celebration. Come grab one!")]
+    @State private var announcements = [Announcement]()
+    @State private var user: User? = nil
+    let ref = Database.database().reference().child("announcements")
     
     var body: some View {
-        List(announcements) { anct in
-                AnnouncementView(announcement: anct)
+        NavigationView {
+            List(announcements) { annon in
+                AnnouncementView(user: user, announcement: annon)
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigation) {
+                    HStack {
+                        Image(systemName: "airplane.circle.fill")
+                        Text("Announcements")
+                            .font(.headline)
+                    }
+                }
+                
+                ToolbarItem(placement: .primaryAction) {
+                    NavigationLink(destination: CreateAnnouncementView(user: user)) {
+                        Label("New Announcement", systemImage: "plus.circle")
+                    }
+                }
+            }
+            .onAppear{
+                
+                //load the user
+                if let userData = UserDefaults.standard.data(forKey: "user") {
+                    if let usr = try? JSONDecoder().decode(User.self, from: userData) {
+                        user = usr
+                        print("Loaded user in announcements view")
+                    }
+                }
+                
+                //attach listeners
+                attachListeners()
+            }
         }
+    }
+    
+    //Listens for changes to announcements
+    func attachListeners() {
+        
+        //if a new announcement is added, append it to the list of annos
+        ref.observe(.childAdded) {snapshot in
+            for _ in snapshot.children {
+                if let annosData = snapshot.value as? [String: Any] {
+                    let annos: Announcement = try! Announcement.fromDict(dictionary: annosData)
+                    if !announcements.contains(where: {$0.id == annos.id}) {
+                        announcements.insert(annos, at: 0)
+                    }
+                }
+            }
+        }
+        
+        //if an announcement is updated, update the view
+        ref.observe(.childChanged) {snapshot in
+            for _ in snapshot.children {
+                if let annosData = snapshot.value as? [String: Any] {
+                    let annos: Announcement = try! Announcement.fromDict(dictionary: annosData)
+                    
+                    if let index = announcements.firstIndex(where: {$0.id == annos.id}) {
+                        announcements[index] = annos
+                    }
+                }
+            }
+        }
+        
+        //if an announcement is removed, update the view
+        ref.observe(.childRemoved) {snapshot in
+           if let annosData = snapshot.value as? [String: Any] {
+               let annos: Announcement = try! Announcement.fromDict(dictionary: annosData)
+               announcements.removeAll(where: {$0.id == annos.id})
+               print("Removed announcement")
+            }
+        }
+        
+        print("Should have attached observers")
     }
 }
 
