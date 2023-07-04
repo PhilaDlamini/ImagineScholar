@@ -30,7 +30,7 @@ struct CreateAnnouncementView: View {
                     .disabled(content.isEmpty)
             }
         }
-        .navigationTitle("New Event")
+        .navigationTitle("New Announcement")
         .navigationBarTitleDisplayMode(.inline)
         
     }
