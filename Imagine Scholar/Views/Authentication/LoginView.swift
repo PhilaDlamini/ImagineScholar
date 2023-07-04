@@ -93,6 +93,8 @@ struct LoginView: View {
                            print("unknown error \(error.localizedDescription)")
                        }
             } else {
+                
+                //load the user data and save to defaults 
                 screen = "create"
                 
                 //TODO: update user info in user defaults
