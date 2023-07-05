@@ -46,6 +46,7 @@
 		4AF166232A4BD893009F7B56 /* EventDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF166222A4BD893009F7B56 /* EventDetailsView.swift */; };
 		4AF166252A4BE1EA009F7B56 /* CreateEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF166242A4BE1EA009F7B56 /* CreateEventView.swift */; };
 		B39E663F2A53DB7100404100 /* AnnouncementDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E663E2A53DB7100404100 /* AnnouncementDetailsView.swift */; };
+		B39E66412A54EF7500404100 /* Forum.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E66402A54EF7500404100 /* Forum.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -81,6 +82,7 @@
 		4AF166222A4BD893009F7B56 /* EventDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailsView.swift; sourceTree = "<group>"; };
 		4AF166242A4BE1EA009F7B56 /* CreateEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventView.swift; sourceTree = "<group>"; };
 		B39E663E2A53DB7100404100 /* AnnouncementDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnouncementDetailsView.swift; sourceTree = "<group>"; };
+		B39E66402A54EF7500404100 /* Forum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Forum.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +149,7 @@
 				4A1097B52A229EE30072BCD7 /* Opportunity.swift */,
 				4A1097302A1AFACA0072BCD7 /* Post.swift */,
 				4A5FC9442A2EEBD400C76847 /* User.swift */,
+				B39E66402A54EF7500404100 /* Forum.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -340,6 +343,7 @@
 				4A1097902A1DD7470072BCD7 /* AnnouncementsView.swift in Sources */,
 				4A5FC9452A2EEBD400C76847 /* User.swift in Sources */,
 				4A1097352A1B002E0072BCD7 /* CreatePostView.swift in Sources */,
+				B39E66412A54EF7500404100 /* Forum.swift in Sources */,
 				4A10978E2A1DD6E30072BCD7 /* CreateAnnouncementView.swift in Sources */,
 				4A10978C2A1DC0FA0072BCD7 /* CreateAccountView.swift in Sources */,
 				4A1097B62A229EE30072BCD7 /* Opportunity.swift in Sources */,
