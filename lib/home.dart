@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:imaginine_scholar/main_views/announcements_view.dart';
-import 'package:imaginine_scholar/main_views/forums_view.dart';
-import 'package:imaginine_scholar/main_views/posts_view.dart';
+import 'package:imaginine_scholar/announcements/announcements_view.dart';
+import 'package:imaginine_scholar/forums/forums_view.dart';
+import 'package:imaginine_scholar/posts/posts_view.dart';
 import 'package:imaginine_scholar/SharedPref.dart';
 import '../models/User.dart' as our;
-import 'main_views/chats_view.dart';
-import 'main_views/events_view.dart';
+import 'chats/chats_view.dart';
+import 'events/events_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
           PostsView(load),
           EventsView(load),
           ChatsView(),
-          AnnouncementsView(),
+          AnnouncementsView(load),
           ForumsView()
         ];
       });

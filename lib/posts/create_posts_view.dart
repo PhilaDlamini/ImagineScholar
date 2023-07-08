@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:imaginine_scholar/main_views/quoted_post_view.dart';
+import 'package:imaginine_scholar/posts/quoted_post_view.dart';
 
 import '../models/Post.dart';
 import '../models/User.dart';
