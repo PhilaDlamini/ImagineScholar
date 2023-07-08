@@ -5,7 +5,7 @@ import 'package:imaginine_scholar/authentication/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:imaginine_scholar/home.dart';
 import 'firebase_options.dart';
-import 'main_views/posts_view.dart';
+import 'posts/posts_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

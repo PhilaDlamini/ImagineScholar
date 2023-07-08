@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:imaginine_scholar/main_views/post_details_view.dart';
-import 'package:imaginine_scholar/main_views/quoted_post_view.dart';
+import 'package:imaginine_scholar/posts/post_details_view.dart';
+import 'package:imaginine_scholar/posts/quoted_post_view.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../models/Post.dart';
 import 'create_posts_view.dart';
@@ -22,20 +22,7 @@ class _PostsViewState extends State<PostsView> {
   @override
   void initState() {
     super.initState();
-
-    //Fetch all current posts
     var ref = FirebaseDatabase.instance.ref();
-    ref.child('posts').get().then((snapshot) {
-      if (snapshot.value != null) {
-        for (var child in snapshot.children) {
-          var postData = child.value as Map<dynamic, dynamic>;
-          var post = Post.fromDict(postData);
-          posts.insert(0, post);
-        }
-      }
-    });
-    posts.sort((a, b) =>
-          DateTime.parse(a.timestamp).compareTo(DateTime.parse(b.timestamp)));
 
     //Listen for post updates
     ref.child('posts').onChildChanged.listen((event) {

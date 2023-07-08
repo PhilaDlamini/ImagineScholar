@@ -20,19 +20,7 @@ class EventsViewState extends State<EventsView> {
   @override
   void initState() {
     super.initState();
-
-    //Fetch all current posts
     var ref = FirebaseDatabase.instance.ref();
-    ref.child('events').get().then((snapshot) {
-      if (snapshot.value != null) {
-        for (var child in snapshot.children) {
-          var eventData = child.value as Map<dynamic, dynamic>;
-          var event = Event.fromDict(eventData);
-          events.removeWhere((e) => e.id == event.id);
-          events.insert(0, event);
-        }
-      }
-    });
 
     //Listen for post updates
     ref.child('events').onChildChanged.listen((ev) {
