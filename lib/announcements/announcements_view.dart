@@ -8,6 +8,7 @@ import 'package:imaginine_scholar/models/Announcement.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 import '../models/User.dart';
+import '../shared_methods.dart';
 class AnnouncementsView extends StatefulWidget {
   final User user;
   const AnnouncementsView(this.user, {super.key});
@@ -86,7 +87,7 @@ class _AnnouncementsViewState extends State<AnnouncementsView> {
                       ],
                     )
                   ];
-                  return ListItem(a.authorURL, a.author, a.getDisplayTime(), a.content, folupsCount, () {
+                  return ListItem(a.authorURL, a.author, getDisplayTime(a.posted), a.content, folupsCount, () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(

@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:imaginine_scholar/posts/quoted_post_view.dart';
+import 'package:intl/intl.dart';
 
 import '../models/Event.dart';
 import '../models/Post.dart';
@@ -9,6 +10,7 @@ import '../models/User.dart';
 
 class CreateEventsView extends StatefulWidget {
   User user;
+
   CreateEventsView(this.user, {super.key});
 
   @override
@@ -27,15 +29,15 @@ class _CreateEventState extends State<CreateEventsView> {
   void _create() {
     var ref = FirebaseDatabase.instance.ref();
     Event event = Event(
-      titleController.text,
-      locationController.text,
-      descriptionController.text,
-      widget.user.imageURL,
-      eventDate!.toIso8601String(), //TODO: combine with time
-      null,
-      null,
-      null
-    );
+        titleController.text,
+        locationController.text,
+        descriptionController.text,
+        widget.user.imageURL,
+        DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(eventDate!.toUtc()),
+        //TODO: combine with time
+        null,
+        null,
+        null);
 
     ref.child('events').child(event.id).set(event.toJson()).then((_) {
       print('posted events!');
@@ -43,7 +45,6 @@ class _CreateEventState extends State<CreateEventsView> {
       descriptionController.text = '';
       locationController.text = '';
       titleController.text = '';
-
     }).onError((error, stackTrace) {
       print('error sending post! ${error.toString()}');
     });
