@@ -42,7 +42,7 @@ struct EventDetailsView: View {
                 
                 HStack {
                     Image(systemName: "clock")
-                    Text(event.displayTime)
+                    Text(event.getDisplayTime(from: event.date))
                 }.padding(.top)
                 
                 HStack {

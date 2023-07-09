@@ -35,7 +35,7 @@ struct AnnouncementView : View {
                     VStack(alignment: .leading){
                         Text(announcement.author)
                             .font(.headline)
-                        Text(announcement.postedDate)
+                        Text(announcement.getDisplayTime(from: announcement.posted))
                     }
                 }
                 
@@ -54,6 +54,7 @@ struct AnnouncementView : View {
 }
 
 struct AnnouncementsView: View {
+    @State private var creatingAnnouncement = false
     @State private var announcements = [Announcement]()
     @State private var user: User? = nil
     let ref = Database.database().reference().child("announcements")
@@ -73,8 +74,10 @@ struct AnnouncementsView: View {
                 }
                 
                 ToolbarItem(placement: .primaryAction) {
-                    NavigationLink(destination: CreateAnnouncementView(user: user)) {
-                        Label("New Announcement", systemImage: "plus.circle")
+                    Button {
+                        creatingAnnouncement = true
+                    } label: {
+                        Image(systemName: "plus.circle")
                     }
                 }
             }
@@ -90,6 +93,9 @@ struct AnnouncementsView: View {
                 
                 //attach listeners
                 attachListeners()
+            }
+            .sheet(isPresented: $creatingAnnouncement) {
+                CreateAnnouncementView()
             }
         }
     }

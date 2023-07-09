@@ -11,90 +11,86 @@ import Firebase
 
 //Displays the post in the listview
 struct PostView: View {
+    @State private var creatingPost = false
     @State var quotedPost: Post? = nil
-    @State var go = false
     var post : Post
     var user: User?
   
     var body: some View {
-        NavigationLink(destination: PostDetailsView(post: post)) { //TODO: remove the > chevron thing
-
-            VStack(alignment: .leading, spacing: 15) {
+        NavigationLink(destination: PostDetailsView(post: post)) {
+        VStack(alignment: .leading, spacing: 15) {
+            
+            HStack {
                 
-                HStack {
+                AsyncImage(url: URL(string: post.authorURL)) {phase in
                     
-                    AsyncImage(url: URL(string: post.authorURL)) {phase in
-                        
-                        if let image = phase.image {
-                            image
-                                .resizable()
-                                .scaledToFill()
-                        } else if phase.error != nil {
-                            Color.red
-                        } else {
-                            ProgressView()
-                        }
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    } else if phase.error != nil {
+                        Color.red
+                    } else {
+                        ProgressView()
                     }
-                    .frame(width: 50, height: 50)
-                    .clipShape(Circle())
-                    
-                    Text(post.author)
-                        .font(.headline)
-                    Spacer()
-                    Text(post.displayDate)
-                    
                 }
+                .frame(width: 50, height: 50)
+                .clipShape(Circle())
                 
-                Text(post.content)
+                Text(post.author)
+                    .font(.headline)
+                Spacer()
+                Text(post.getDisplayTime(from: post.timestamp))
                 
-                if let quotedPost = quotedPost {
-                    QuotedPostView(post: quotedPost)
-                }
-                
-                HStack (spacing: 30) {
-                    HStack{
-                        
-                        Button(action: updateLike) {
-                            if let user = user {
-                                if let likes = post.likes {
-                                    if(likes.contains(user.uid)) {
-                                        Image(systemName: "heart.fill")
-                                            .foregroundColor(.red)
-                                    } else {
-                                        Image(systemName: "heart")
-                                    }
+            }
+            
+            Text(post.content)
+            
+            if let quotedPost = quotedPost {
+                QuotedPostView(post: quotedPost)
+            }
+            
+            HStack (spacing: 30) {
+                HStack{
+                    
+                    Button(action: updateLike) {
+                        if let user = user {
+                            if let likes = post.likes {
+                                if(likes.contains(user.uid)) {
+                                    Image(systemName: "heart.fill")
+                                        .foregroundColor(.red)
                                 } else {
                                     Image(systemName: "heart")
                                 }
+                            } else {
+                                Image(systemName: "heart")
                             }
                         }
-                        .buttonStyle(BorderlessButtonStyle())//ensures it's clickable in this nav layout
-                        
-                        Text("\(post.likes?.count ?? 0)")
                     }
-                    HStack{
-                        Image(systemName: "text.bubble")
-                        Text("\(post.comments?.count ?? 0)")
-                    }
+                    .buttonStyle(BorderlessButtonStyle())//ensures it's clickable in this nav layout
                     
-                    
-                    //TODO: this works but it's not elegeant (also this is depracated so)
-                    //TODO: the chevrons also don't look good at all :(
-                    NavigationLink(destination: CreatePostView(quotedPost: post), isActive: $go) {
-                        Button {
-                            go = true
-                        } label: {
-                            Image(systemName: "quote.closing")
-                        }
-                        .buttonStyle(BorderlessButtonStyle())
-                    }
-                    
+                    Text("\(post.likes?.count ?? 0)")
+                }
+                HStack{
+                    Image(systemName: "text.bubble")
+                    Text("\(post.comments?.count ?? 0)")
                 }
                 
+                Button {
+                    creatingPost = true
+                } label: {
+                    Image(systemName: "quote.closing")
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                
             }
+            
         }
-        .onAppear(perform: loadQuotedPost)
-        
+    }
+            .onAppear(perform: loadQuotedPost)
+            .sheet(isPresented: $creatingPost) {
+                CreatePostView(quotedPost: post)
+            }
     }
     
     //loads the quoted post if present
@@ -167,6 +163,7 @@ struct PostView: View {
 }
 
 struct PostsView: View {
+    @State private var creatingPost = false
     @State private var posts = [Post]()
     @State private var user: User? = nil
     let ref = Database.database().reference().child("posts")
@@ -187,8 +184,10 @@ struct PostsView: View {
                 }
                 
                 ToolbarItem(placement: .primaryAction) {
-                    NavigationLink(destination: CreatePostView(quotedPost: nil)) {
-                        Label("New Post", systemImage: "plus.circle")
+                    Button {
+                        creatingPost = true
+                    } label: {
+                        Image(systemName: "plus.circle")
                     }
                 }
                 
@@ -215,6 +214,9 @@ struct PostsView: View {
                 
                 //attach listeners
                 attachListeners()
+            }
+            .sheet(isPresented: $creatingPost) {
+                CreatePostView(quotedPost: nil)
             }
             
         }

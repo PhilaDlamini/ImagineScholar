@@ -36,6 +36,7 @@ struct CreateAnnouncementView: View {
     }
     
     func announce() {
+        print("About to annojnce")
         if let user = user {
             let annon = Announcement(author: user.name, authorURL: user.imageURL, content: content, expiry: expiryDate.ISO8601Format())
             
