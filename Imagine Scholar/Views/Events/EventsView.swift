@@ -36,7 +36,7 @@ struct EventView: View {
                     VStack(alignment: .leading) {
                         Text(event.name)
                             .font(.headline)
-                        Text("date")//Text(event.displayDate)
+                        Text(event.getDisplayTime(from: event.date))
                     }
                     
                 }
@@ -70,7 +70,6 @@ struct EventView: View {
                 }
                 .padding(.leading, 25)
             }
-            
         }
     }
     
@@ -150,6 +149,7 @@ struct EventView: View {
 }
 
 struct EventsView: View {
+    @State private var creatingEvent = false
     @State private var events = [Event]()
     @State private var user: User? = nil
     let ref = Database.database().reference().child("events")
@@ -158,6 +158,9 @@ struct EventsView: View {
         NavigationView {
             List(events) { event in
                 EventView(user: user, event: event)
+            }
+            .sheet(isPresented: $creatingEvent) {
+                CreateEventView()
             }
             .toolbar {
                 
@@ -170,8 +173,10 @@ struct EventsView: View {
                 }
                 
                 ToolbarItem(placement: .primaryAction) {
-                    NavigationLink(destination: CreateEventView()) {
-                        Label("New Event", systemImage: "plus.circle")
+                    Button {
+                        creatingEvent = true
+                    } label: {
+                        Image(systemName: "plus.circle")
                     }
                 }
             }

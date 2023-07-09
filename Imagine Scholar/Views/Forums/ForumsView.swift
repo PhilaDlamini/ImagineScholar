@@ -19,7 +19,7 @@ struct ForumResponseView: View {
             VStack(alignment: .leading) {
                 Text(forumResponse.authorName ?? "Anonymous")
                     .font(.headline)
-                Text(forumResponse.displayDate)
+                Text(forumResponse.getDisplayTime(from: forumResponse.date))
                     .font(.subheadline)
                 Text(forumResponse.response)
             }
@@ -28,7 +28,7 @@ struct ForumResponseView: View {
                 VStack(alignment: .leading) {
                     Text(quoted.authorName ?? "Anonymous")
                         .font(.headline)
-                    Text(quoted.displayDate)
+                    Text(quoted.getDisplayTime(from: quoted.date))
                         .font(.subheadline)
                     
                     Text(quoted.response)
@@ -52,7 +52,7 @@ struct ForumResponseView: View {
             .child("responses").observeSingleEvent(of: .value) {snapshot in
                 for child in snapshot.children {
                     if let resData = (child as! DataSnapshot).value as? [String: Any] {
-                        let res: ForumResponse = try! Post.fromDict(dictionary: resData)
+                        let res: ForumResponse = try! ForumResponse.fromDict(dictionary: resData)
                         if res.id == quotedResponseId {
                             quotedResponse = res
                         }

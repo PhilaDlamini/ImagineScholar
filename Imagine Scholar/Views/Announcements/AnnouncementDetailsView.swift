@@ -39,7 +39,7 @@ struct AnnouncementDetailsView: View {
                         VStack(alignment: .leading){
                             Text(announcement.author)
                                 .font(.headline)
-                            Text(announcement.postedDate)
+                            Text(announcement.getDisplayTime(from: announcement.posted))
                         }
                     }
                     

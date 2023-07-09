@@ -56,8 +56,10 @@ struct CreateEventView: View {
     func createEvent() {
         if let user = user {
             
+            //gets the time 
+            
             //TODO: mix date and time
-            let event = Event(name: title, location: location, description: description, authorURL: user.imageURL, date: date.ISO8601Format())
+            let event = Event(name: title, location: location, description: description, authorURL: user.imageURL, date: Event.getIsoTime(from: date))
             
             let ref = Database.database().reference()
             ref.child("events").child(event.id).setValue(try! event.getDict()) {(error, ref) in

@@ -25,7 +25,7 @@ struct QuotedPostView: View {
                 Text(post.author)
                     .font(.headline)
                 
-                Text(post.displayDate)
+                Text(post.getDisplayTime(from: post.timestamp))
                     .font(.subheadline)
                 Spacer()
             }
