@@ -5,6 +5,7 @@ import 'package:imaginine_scholar/posts/post_details_view.dart';
 import 'package:imaginine_scholar/posts/quoted_post_view.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../models/Post.dart';
+import '../shared_methods.dart';
 import 'create_posts_view.dart';
 import '../models/User.dart' as our;
 
@@ -175,7 +176,7 @@ class PostView extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  Text(post.getDisplayTime())
+                  Text(getDisplayTime(post.timestamp))
                 ],
               ),
               Padding(

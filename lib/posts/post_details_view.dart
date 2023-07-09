@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:imaginine_scholar/main.dart';
 import '../models/Post.dart';
 import '../models/User.dart';
+import '../shared_methods.dart';
 
 /*
  * TODO:Add reply to post comment functionality
@@ -85,7 +86,7 @@ class _PostDetailsState extends State<PostDetailsView>{
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 8), child: Text(widget.post.getDisplayTime())
+                    padding: const EdgeInsets.only(left: 8), child: Text(getDisplayTime(widget.post.timestamp))
                   )
                 ],
               ),
