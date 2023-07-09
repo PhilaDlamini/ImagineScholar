@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
           EventsView(load),
           ChatsView(),
           AnnouncementsView(load),
-          ForumsView()
+          ForumsView(load)
         ];
       });
     } on Exception {

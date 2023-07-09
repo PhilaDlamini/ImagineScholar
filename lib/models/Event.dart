@@ -30,10 +30,6 @@ class Event {
     return "time";
   }
 
-  String getDisplayDate() {
-    return "date";
-  }
-
   static fromDict(Map<dynamic, dynamic> data) {
     var event = Event(
       data['name'],

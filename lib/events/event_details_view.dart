@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../models/Event.dart';
+import '../shared_methods.dart';
 
 class EventDetailsView extends StatefulWidget {
   Event event;
@@ -46,7 +47,7 @@ class EventDetailsState extends State<EventDetailsView> {
                           style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                        Text(widget.event.getDisplayDate())
+                        Text(getDisplayTime(widget.event.date))
                       ],
                     ),
                   ),
