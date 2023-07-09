@@ -5,6 +5,7 @@ import 'package:imaginine_scholar/list_item.dart';
 
 import '../models/Announcement.dart';
 import '../models/User.dart';
+import '../shared_methods.dart';
 
 class AnnouncementDetailsView extends StatefulWidget {
   User user;
@@ -79,7 +80,7 @@ class _AnnouncementDetailsState extends State<AnnouncementDetailsView> {
                               style: const TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold),
                             ),
-                            Text(widget.announcement.getDisplayTime())
+                            Text(getDisplayTime(widget.announcement.posted))
                           ],
                         ),
                       ),

@@ -9,13 +9,11 @@ class Announcement {
   String authorURL;
   String content;
   String expiry;
-  String posted = DateTime.now().toIso8601String();
+  String posted = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(DateTime.now().toUtc());
   List<FollowUp>? followups;
 
   Announcement(this.author, this.authorURL, this.content, this.expiry,
       this.followups);
-
-  getDisplayTime() => "1hr ago";
 
   static fromDict(Map<dynamic, dynamic> data) {
     var annos = Announcement(

@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:imaginine_scholar/shared_methods.dart';
 import '../models/Event.dart';
 import '../models/User.dart';
 import 'create_event_view.dart';
@@ -8,6 +9,7 @@ import 'event_details_view.dart';
 
 class EventsView extends StatefulWidget {
   User user;
+
   EventsView(this.user, {super.key});
 
   @override
@@ -84,6 +86,7 @@ class EventsViewState extends State<EventsView> {
 class EventView extends StatelessWidget {
   Event event;
   User user;
+
   EventView(this.event, this.user, {super.key});
 
   Icon getMailIcon() {
@@ -154,8 +157,7 @@ class EventView extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-              builder: (context) => EventDetailsView(event)),
+          MaterialPageRoute(builder: (context) => EventDetailsView(event)),
         );
       },
       child: Row(
@@ -188,6 +190,7 @@ class EventView extends StatelessWidget {
                   style: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.bold),
                 ),
+                Text(getDisplayTime(event.date)),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: Text(
@@ -200,8 +203,8 @@ class EventView extends StatelessWidget {
                   child: Row(
                     children: [
                       IconButton(
-                          icon: getMailIcon(),
-                          onPressed: _updateRVSPs,
+                        icon: getMailIcon(),
+                        onPressed: _updateRVSPs,
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),

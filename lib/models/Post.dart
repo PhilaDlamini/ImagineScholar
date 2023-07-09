@@ -11,7 +11,7 @@ class Post {
   List<String>? likes; //list of UIDs of everyone who liked the post
   List<String>? likedURLs; //pic urls of users who liked the post
   String? quotedPostId; //id of the quoted post
-  String timestamp = DateTime.now().toIso8601String();
+  String timestamp = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(DateTime.now().toUtc());
 
   Post(this.author, this.authorURL, this.content, this.comments, this.likes,
       this.likedURLs, this.quotedPostId);
