@@ -6,72 +6,96 @@
 //
 
 import SwiftUI
+import Firebase
+import FirebaseDatabase
 
 struct OpportunityView : View {
-    var opportunity : Opportunity
-    var type : String
+    var opportunity: Opportunity
     
     var body : some View {
         VStack(alignment: .leading, spacing: 20) {
-            
-           
-            VStack(alignment: .leading){
-                Text(opportunity.name)
-                    .font(.headline)
-                Text("Due Fri 2:30 PM")
-                    .font(.subheadline)
-            }
-    
-            
-            Text(opportunity.what)
-            
-            if type == "Facilitator" {
-                HStack {
-                    Circle()
-                        .fill(opportunity.tag == "All" ? .mint : opportunity.tag == "Alumni" ? .accentColor : .indigo)
-                        .frame(width: 15, height: 15)
-                      
-                    Text(opportunity.tag)
+            HStack {
+                VStack(alignment: .leading){
+                    Text(opportunity.name)
+                        .font(.headline)
+                    Text("Due Fri 2:30 PM")
+                        .font(.subheadline)
                 }
-            } else {
-                Button("Apply here") {
-                    
+                Spacer()
+                Link(destination: URL(string: opportunity.link)!) {
+                    Image(systemName: "link.circle.fill")
                 }
             }
-           
-
+            Text(opportunity.content)
         }
     }
 }
 
 struct OpportunitiesView: View {
-    @AppStorage("type") private var accountType = "Student"
-
-    var opportunities = [Opportunity(name: "YYGS", what: "Go to Yale in New Haven", tag: "Student", link: "https:\\www.google.com"),
-     Opportunity(name: "Apple Inc.", what: "Apple has a bunch of job positions open. Apply today!", tag: "Alumni", link: "https:\\www.google.com"),
-     Opportunity(name: "Google Inc.", what: "Goole accounting positions!", tag: "Alumni", link: "https:\\www.google.com"),
-     Opportunity(name: "Mentors", what: "Mentor other IS students", tag: "All", link: "https:\\www.google.com")
-        
-    ]
+    let ref = Database.database().reference().child("opportunities")
+    @EnvironmentObject var user: User
+    @State private var opportunities = [Opportunity]()
+    @State private var addingNew = false
     
     var body: some View {
-        List (getOpportunities()) {op in
-            OpportunityView(opportunity: op, type: accountType)
+        List (opportunities) {op in
+            OpportunityView(opportunity: op)
+        }
+        .navigationTitle("Opportunities")
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            opportunities.removeAll(where: {$0.tag != user.type || $0.tag == "all"})
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                NavigationLink(destination: AddOpportunityView()) {
-                    Label("Add", systemImage: "plus.circle")
+                Button {
+                    addingNew = true
+                } label: {
+                    Image(systemName: "plus.circle")
                 }
             }
         }
+        .onAppear {
+            attachListeners()
+        }
+        .sheet(isPresented: $addingNew) {
+            AddOpportunityView()
+        }
     }
     
-    func getOpportunities() -> [Opportunity] {
-        if accountType == "Facilitator" {
-            return opportunities
-        } else {
-            return opportunities.filter({$0.tag == accountType || $0.tag == "All"})
+    func attachListeners()  {
+        
+        //if a new opportunity is added, append it to the list of oppportunities
+        ref.observe(.childAdded) {snapshot in
+            for _ in snapshot.children {
+                if let opData = snapshot.value as? [String: Any] {
+                    let op: Opportunity = try! Opportunity.fromDict(dictionary: opData)
+                    if !opportunities.contains(where: {$0.id == op.id}) {
+                        opportunities.insert(op, at: 0)
+                    }
+                }
+            }
+        }
+        
+        //if an opportunity is updated, update the view
+        ref.observe(.childChanged) {snapshot in
+            for _ in snapshot.children {
+                if let opData = snapshot.value as? [String: Any] {
+                    let op: Opportunity = try! Opportunity.fromDict(dictionary: opData)
+                    
+                    if let index = opportunities.firstIndex(where: {$0.id == op.id}) {
+                        opportunities[index] = op
+                    }
+                }
+            }
+        }
+        
+        //if an opportunity is removed, update the view
+        ref.observe(.childRemoved) {snapshot in
+           if let opData = snapshot.value as? [String: Any] {
+               let op: Opportunity = try! Opportunity.fromDict(dictionary: opData)
+               opportunities.removeAll(where: {$0.id == op.id})
+            }
         }
     }
 }
@@ -81,3 +105,5 @@ struct OpportunitiesView_Previews: PreviewProvider {
         OpportunitiesView()
     }
 }
+
+//TODO: fix showing only revelant ops (broken when a new op is being added) 

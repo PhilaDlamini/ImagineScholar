@@ -11,50 +11,47 @@ import Firebase
 
 //Displays the post in the listview
 struct PostView: View {
-    @State private var creatingPost = false
+    var post: Post
     @State var quotedPost: Post? = nil
-    var post : Post
-    var user: User?
-  
+    @EnvironmentObject var user: User
+    @State private var creatingPost = false
+
     var body: some View {
         NavigationLink(destination: PostDetailsView(post: post)) {
-        VStack(alignment: .leading, spacing: 15) {
-            
-            HStack {
-                
-                AsyncImage(url: URL(string: post.authorURL)) {phase in
-                    
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    } else if phase.error != nil {
-                        Color.red
-                    } else {
-                        ProgressView()
+            VStack(alignment: .leading, spacing: 15) {
+                HStack {
+                    AsyncImage(url: URL(string: post.authorURL)) {phase in
+                        
+                        if let image = phase.image {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        } else if phase.error != nil {
+                            Color.red
+                        } else {
+                            ProgressView()
+                        }
                     }
-                }
-                .frame(width: 50, height: 50)
-                .clipShape(Circle())
-                
-                Text(post.author)
-                    .font(.headline)
-                Spacer()
-                Text(post.getDisplayTime(from: post.timestamp))
-                
-            }
-            
-            Text(post.content)
-            
-            if let quotedPost = quotedPost {
-                QuotedPostView(post: quotedPost)
-            }
-            
-            HStack (spacing: 30) {
-                HStack{
+                    .frame(width: 50, height: 50)
+                    .clipShape(Circle())
                     
-                    Button(action: updateLike) {
-                        if let user = user {
+                    Text(post.author)
+                        .font(.headline)
+                    Spacer()
+                    Text(post.getDisplayTime(from: post.timestamp))
+                    
+                }
+                
+                Text(post.content)
+                
+                if let quotedPost = quotedPost {
+                    QuotedPostView(post: quotedPost)
+                }
+                
+                HStack (spacing: 30) {
+                    HStack{
+                        
+                        Button(action: updateLike) {
                             if let likes = post.likes {
                                 if(likes.contains(user.uid)) {
                                     Image(systemName: "heart.fill")
@@ -66,31 +63,30 @@ struct PostView: View {
                                 Image(systemName: "heart")
                             }
                         }
+                        .buttonStyle(BorderlessButtonStyle())//ensures it's clickable in this nav layout
+                        
+                        Text("\(post.likes?.count ?? 0)")
                     }
-                    .buttonStyle(BorderlessButtonStyle())//ensures it's clickable in this nav layout
+                    HStack{
+                        Image(systemName: "text.bubble")
+                        Text("\(post.comments?.count ?? 0)")
+                    }
                     
-                    Text("\(post.likes?.count ?? 0)")
+                    Button {
+                        creatingPost = true
+                    } label: {
+                        Image(systemName: "quote.closing")
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    
                 }
-                HStack{
-                    Image(systemName: "text.bubble")
-                    Text("\(post.comments?.count ?? 0)")
-                }
-                
-                Button {
-                    creatingPost = true
-                } label: {
-                    Image(systemName: "quote.closing")
-                }
-                .buttonStyle(BorderlessButtonStyle())
                 
             }
-            
         }
-    }
-            .onAppear(perform: loadQuotedPost)
-            .sheet(isPresented: $creatingPost) {
-                CreatePostView(quotedPost: post)
-            }
+        .onAppear(perform: loadQuotedPost)
+        .sheet(isPresented: $creatingPost) {
+            CreatePostView(quotedPost: post)
+        }
     }
     
     //loads the quoted post if present
@@ -109,53 +105,50 @@ struct PostView: View {
     
     //updates the like
     func updateLike() {
+        var likes = post.likes ?? []
+        let ref = Database.database().reference().child("posts")
         
-        if let user = user {
-            var likes = post.likes ?? []
-            let ref = Database.database().reference().child("posts")
+        //Unlike if already liked
+        if likes.contains(user.uid) {
             
-            //Unlike if already liked
-            if likes.contains(user.uid) {
-                
-                likes.removeAll {$0 == user.uid}
-                ref.child(post.id).child("likes").setValue(likes) {err, _ in
-                    if let err = err {
-                        print("Error removing like! \(err.localizedDescription)")
-                    } else {
-                        print("Sent like successfully :)")
-                    }
+            likes.removeAll {$0 == user.uid}
+            ref.child(post.id).child("likes").setValue(likes) {err, _ in
+                if let err = err {
+                    print("Error removing like! \(err.localizedDescription)")
+                } else {
+                    print("Sent like successfully :)")
                 }
-                
-                var likedURLs = post.likedURLs!
-                likedURLs.removeAll{$0 == user.imageURL}
-                ref.child(post.id).child("likedURLs").setValue(likedURLs) {err, _ in
-                    if let err = err {
-                        print("Error removing author url! \(err.localizedDescription)")
-                    } else {
-                        print("Removed author URL successfully :)")
-                    }
+            }
+            
+            var likedURLs = post.likedURLs!
+            likedURLs.removeAll{$0 == user.imageURL}
+            ref.child(post.id).child("likedURLs").setValue(likedURLs) {err, _ in
+                if let err = err {
+                    print("Error removing author url! \(err.localizedDescription)")
+                } else {
+                    print("Removed author URL successfully :)")
                 }
-                
-            } else {
-                
-                //Else, send like
-                likes.append(user.uid)
-                ref.child(post.id).child("likes").setValue(likes) {err, _ in
-                    if let err = err {
-                        print("Error adding like! \(err.localizedDescription)")
-                    } else {
-                        print("Sent like successfully :)")
-                    }
+            }
+            
+        } else {
+            
+            //Else, send like
+            likes.append(user.uid)
+            ref.child(post.id).child("likes").setValue(likes) {err, _ in
+                if let err = err {
+                    print("Error adding like! \(err.localizedDescription)")
+                } else {
+                    print("Sent like successfully :)")
                 }
-                
-                var likedURLs = post.likedURLs ?? []
-                likedURLs.append(user.imageURL)
-                ref.child(post.id).child("likedURLs").setValue(likedURLs) {err, _ in
-                    if let err = err {
-                        print("Error adding url! \(err.localizedDescription)")
-                    } else {
-                        print("Sent authoer URL successfully :)")
-                    }
+            }
+            
+            var likedURLs = post.likedURLs ?? []
+            likedURLs.append(user.imageURL)
+            ref.child(post.id).child("likedURLs").setValue(likedURLs) {err, _ in
+                if let err = err {
+                    print("Error adding url! \(err.localizedDescription)")
+                } else {
+                    print("Sent authoer URL successfully :)")
                 }
             }
         }
@@ -165,14 +158,17 @@ struct PostView: View {
 struct PostsView: View {
     @State private var creatingPost = false
     @State private var posts = [Post]()
-    @State private var user: User? = nil
+    @EnvironmentObject var user: User
     let ref = Database.database().reference().child("posts")
 
     var body: some View {
         NavigationView {
             List(posts) { post in
-                PostView(post: post, user: user)
+                PostView(post: post)
                 
+            }
+            .sheet(isPresented: $creatingPost) {
+                CreatePostView(quotedPost: nil)
             }
             .toolbar {
                 ToolbarItem(placement: .navigation) {
@@ -204,19 +200,7 @@ struct PostsView: View {
 //                }
             }
             .onAppear{
-                
-                //load the user
-                if let userData = UserDefaults.standard.data(forKey: "user") {
-                    if let usr = try? JSONDecoder().decode(User.self, from: userData) {
-                        user = usr
-                    }
-                }
-                
-                //attach listeners
                 attachListeners()
-            }
-            .sheet(isPresented: $creatingPost) {
-                CreatePostView(quotedPost: nil)
             }
             
         }
@@ -258,14 +242,5 @@ struct PostsView: View {
                print("Removed post")
             }
         }
-        
-        print("Should have attached observers")
     }
 }
-
-
-//struct PostsView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        PostsView()
-//    }
-//}

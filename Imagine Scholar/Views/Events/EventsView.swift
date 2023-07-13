@@ -11,7 +11,7 @@ import FirebaseDatabase
 
 //Displays the announcement
 struct EventView: View {
-    var user: User?
+    @EnvironmentObject var user: User
     var event : Event
   
     var body: some View {
@@ -49,7 +49,6 @@ struct EventView: View {
                         Text(event.description)
                         HStack (spacing: 10) {
                                 Button(action: updateRSVP) {
-                                    if let user = user {
                                         if let rsvps = event.rsvpd {
                                             if(rsvps.contains(user.uid)) {
                                                 Image(systemName: "envelope.fill")
@@ -60,7 +59,7 @@ struct EventView: View {
                                         } else {
                                             Image(systemName: "envelope")
                                         }
-                                    }
+                                    
                                 }
                                 .buttonStyle(BorderlessButtonStyle())
                                 Text("\(event.rsvpd?.count ?? 0)")
@@ -74,74 +73,71 @@ struct EventView: View {
     }
     
     func updateRSVP() {
+        var rsvpd = event.rsvpd ?? []
+        var rsvpdNames = event.rsvpdNames ?? []
+        var rsvpdURLs = event.rsvpdURLs ?? []
+        let ref = Database.database().reference().child("events")
         
-        if let user = user {
-            var rsvpd = event.rsvpd ?? []
-            var rsvpdNames = event.rsvpdNames ?? []
-            var rsvpdURLs = event.rsvpdURLs ?? []
-            let ref = Database.database().reference().child("events")
+        //Unlike if already liked
+        if rsvpd.contains(user.uid) {
             
-            //Unlike if already liked
-            if rsvpd.contains(user.uid) {
-                
-                rsvpd.removeAll {$0 == user.uid}
-                rsvpdNames.removeAll {$0 == user.name}
-                rsvpdURLs.removeAll {$0 == user.imageURL}
-                
-                ref.child(event.id).child("rsvpd").setValue(rsvpd) {err, _ in
-                    if let err = err {
-                        print("Error removing! \(err.localizedDescription)")
-                    } else {
-                        print("Sent like successfully :)")
-                    }
+            rsvpd.removeAll {$0 == user.uid}
+            rsvpdNames.removeAll {$0 == user.name}
+            rsvpdURLs.removeAll {$0 == user.imageURL}
+            
+            ref.child(event.id).child("rsvpd").setValue(rsvpd) {err, _ in
+                if let err = err {
+                    print("Error removing! \(err.localizedDescription)")
+                } else {
+                    print("Sent like successfully :)")
                 }
-                
-                ref.child(event.id).child("rsvpdURLs").setValue(rsvpdURLs) {err, _ in
-                    if let err = err {
-                        print("Error removing url! \(err.localizedDescription)")
-                    } else {
-                        print("Removed author URL successfully :)")
-                    }
+            }
+            
+            ref.child(event.id).child("rsvpdURLs").setValue(rsvpdURLs) {err, _ in
+                if let err = err {
+                    print("Error removing url! \(err.localizedDescription)")
+                } else {
+                    print("Removed author URL successfully :)")
                 }
-                
-                ref.child(event.id).child("rsvpdNames").setValue(rsvpdNames) {err, _ in
-                    if let err = err {
-                        print("Error removing name! \(err.localizedDescription)")
-                    } else {
-                        print("Removed name successfully :)")
-                    }
+            }
+            
+            ref.child(event.id).child("rsvpdNames").setValue(rsvpdNames) {err, _ in
+                if let err = err {
+                    print("Error removing name! \(err.localizedDescription)")
+                } else {
+                    print("Removed name successfully :)")
                 }
-                
-            } else {
-                
-                //Else, send rsvp
-                rsvpd.append(user.uid)
-                rsvpdNames.append(user.name)
-                rsvpdURLs.append(user.imageURL)
-                
-                
-                ref.child(event.id).child("rsvpd").setValue(rsvpd) {err, _ in
-                    if let err = err {
-                        print("Error adding rsvp! \(err.localizedDescription)")
-                    } else {
-                        print("Sent rsvp successfully :)")
-                    }
+            }
+            
+        } else {
+            
+            //Else, send rsvp
+            rsvpd.append(user.uid)
+            rsvpdNames.append(user.name)
+            rsvpdURLs.append(user.imageURL)
+            
+            
+            ref.child(event.id).child("rsvpd").setValue(rsvpd) {err, _ in
+                if let err = err {
+                    print("Error adding rsvp! \(err.localizedDescription)")
+                } else {
+                    print("Sent rsvp successfully :)")
                 }
-                
-                ref.child(event.id).child("rsvpdURLs").setValue(rsvpdURLs) {err, _ in
-                    if let err = err {
-                        print("Error adding url! \(err.localizedDescription)")
-                    } else {
-                        print("Sent authoer URL successfully :)")
-                    }
+            }
+            
+            ref.child(event.id).child("rsvpdURLs").setValue(rsvpdURLs) {err, _ in
+                if let err = err {
+                    print("Error adding url! \(err.localizedDescription)")
+                } else {
+                    print("Sent authoer URL successfully :)")
                 }
-                
-                ref.child(event.id).child("rsvpdNames").setValue(rsvpdNames) {err, _ in
-                    if let err = err {
-                        print("Error adding name! \(err.localizedDescription)")
-                    } else {
-                        print("Sent name successfully :)")
-                    }
+            }
+            
+            ref.child(event.id).child("rsvpdNames").setValue(rsvpdNames) {err, _ in
+                if let err = err {
+                    print("Error adding name! \(err.localizedDescription)")
+                } else {
+                    print("Sent name successfully :)")
                 }
             }
         }
@@ -151,13 +147,13 @@ struct EventView: View {
 struct EventsView: View {
     @State private var creatingEvent = false
     @State private var events = [Event]()
-    @State private var user: User? = nil
+    @EnvironmentObject var user: User
     let ref = Database.database().reference().child("events")
     
     var body: some View {
         NavigationView {
             List(events) { event in
-                EventView(user: user, event: event)
+                EventView(event: event)
             }
             .sheet(isPresented: $creatingEvent) {
                 CreateEventView()
@@ -181,15 +177,6 @@ struct EventsView: View {
                 }
             }
             .onAppear{
-                
-                //load the user
-                if let userData = UserDefaults.standard.data(forKey: "user") {
-                    if let usr = try? JSONDecoder().decode(User.self, from: userData) {
-                        user = usr
-                    }
-                }
-                
-                //attach listeners
                 attachListeners()
             }
         }

@@ -12,14 +12,13 @@ import Firebase
 struct AnnouncementDetailsView: View {
     @Environment(\.dismiss) var dismiss
     var announcement: Announcement
-    var user: User?
+    @EnvironmentObject var user: User
     @State private var followUp = ""
     
     var body: some View {
         ZStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    
                     HStack {
                         AsyncImage(url: URL(string: announcement.authorURL)) {phase in
                             
@@ -103,7 +102,6 @@ struct AnnouncementDetailsView: View {
             }
         }
         .toolbar {
-            if let user = user {
                 if user.imageURL == announcement.authorURL { //TODO: need a stronger  way to authenticate here
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button{
@@ -113,7 +111,7 @@ struct AnnouncementDetailsView: View {
                         }
                     }
                 }
-            }
+            
         }
         .padding()
     }
@@ -127,31 +125,27 @@ struct AnnouncementDetailsView: View {
     
     //adds the follow up to the post
     func postFollowUp() {
-        if let user = user {
-            var followups = announcement.followups ?? []
-            let follow = FollowUp(author: user.name, imageURL: user.imageURL, content: followUp)
-            followups.append(follow)
-            
-            //convert each follow up to a dictionary
-            var coms: [[String:Any]] = []
-            for f in followups {
-                coms.append(try! f.getDict()!)
-            }
-            
-            let ref = Database.database().reference()
-            ref.child("announcements").child(announcement.id).child("followups").setValue(coms) {err, _ in
-                if let err = err {
-                    print("Error adding followup! \(err.localizedDescription)")
-                } else {
-                    print("Successfully added followup!")
-                    
-                    followUp = ""
-                }
-            }
-            
-        } else {
-            print("Failed to load the current user")
+        var followups = announcement.followups ?? []
+        let follow = FollowUp(author: user.name, imageURL: user.imageURL, content: followUp)
+        followups.append(follow)
+        
+        //convert each follow up to a dictionary
+        var coms: [[String:Any]] = []
+        for f in followups {
+            coms.append(try! f.getDict()!)
         }
+        
+        let ref = Database.database().reference()
+        ref.child("announcements").child(announcement.id).child("followups").setValue(coms) {err, _ in
+            if let err = err {
+                print("Error adding followup! \(err.localizedDescription)")
+            } else {
+                print("Successfully added followup!")
+                
+                followUp = ""
+            }
+        }
+        
     }
 }
 
