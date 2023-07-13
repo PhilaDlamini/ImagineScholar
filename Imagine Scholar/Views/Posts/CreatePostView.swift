@@ -12,78 +12,71 @@ import Firebase
 struct CreatePostView: View {
     @Environment(\.dismiss) var dismiss
     @State private var text = ""
-    @State private var user: User? = nil
+    @EnvironmentObject var user: User
     @State var quotedPost: Post?
     
     var body: some View {
-        VStack (alignment: .leading) {
-        
-            if let user = user {
-                
-                HStack {
-                    
-                    AsyncImage(url: URL(string: user.imageURL)) {phase in
+        NavigationView {
+            VStack (alignment: .leading) {
+                    HStack {
                         
-                        if let image = phase.image {
-                            image
-                                .resizable()
-                                .scaledToFill()
-                        } else if phase.error != nil {
-                            Color.red
-                        } else {
-                            ProgressView()
+                        AsyncImage(url: URL(string: user.imageURL)) {phase in
+                            
+                            if let image = phase.image {
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                            } else if phase.error != nil {
+                                Color.red
+                            } else {
+                                ProgressView()
+                            }
                         }
+                        .frame(width: 50, height: 50)
+                        .clipShape(Circle())
+                        
+                        Text(user.name)
+                            .font(.headline)
                     }
-                    .frame(width: 50, height: 50)
-                    .clipShape(Circle())
-                    
-                    Text(user.name)
-                        .font(.headline)
-                }
-            }
-            
-            
-            TextField("What's going on?", text: $text, axis: .vertical)
-                .onSubmit(post)
+                TextField("What's going on?", text: $text, axis: .vertical)
+                    .onSubmit(post)
                 
-            if let quotedPosted = quotedPost {
-                QuotedPostView(post: quotedPosted)
+                if let quotedPosted = quotedPost {
+                    QuotedPostView(post: quotedPosted)
+                }
+                Spacer()
+                
             }
-            Spacer()
-            
-        }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button("Post", action: post)
-            }
-        }
-        .onAppear(perform: {
-            if let userData = UserDefaults.standard.data(forKey: "user") {
-                if let usr = try? JSONDecoder().decode(User.self, from: userData) {
-                    user = usr
+            .padding()
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        post()
+                    } label: {
+                        Image(systemName: "arrow.up.circle.fill")
+                    }
+                    .disabled(text.isEmpty)
                 }
             }
-        })
+            .navigationTitle("New Post")
+            .navigationBarTitleDisplayMode(.inline)
+        }
     }
     
     func post() {
         let ref = Database.database().reference()
         
         //save the data
-        if let user = user {
-            let post = Post(author: user.name, authorURL: user.imageURL, content: text,  comments: nil, likes: nil, likedURLs: nil, quotedPostId: quotedPost?.id ?? nil)
-            
-            ref.child("posts").child(post.id).setValue(try! post.getDict()) {(error, ref) in
-                if let error = error {
-                    print("Error posting! \(error.localizedDescription)")
-                } else {
-                    print("posted!")
-                }
+        let post = Post(author: user.name, authorURL: user.imageURL, content: text,  comments: nil, likes: nil, likedURLs: nil, quotedPostId: quotedPost?.id ?? nil)
+        
+        ref.child("posts").child(post.id).setValue(try! post.getDict()) {(error, ref) in
+            if let error = error {
+                print("Error posting! \(error.localizedDescription)")
+            } else {
+                print("posted!")
             }
         }
-            
+        
         dismiss()
     }
 }

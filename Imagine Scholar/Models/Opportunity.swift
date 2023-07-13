@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct Opportunity: Identifiable {
-    var id = UUID()
+struct Opportunity: Identifiable, Codable {
+    var id = UUID().uuidString
     var name : String
-    var what: String
-    var tag: String //who is it meant for ["all", "students", "alumni"]
-    var link : String
-    var dueDate = Date()
+    var content: String
+    var tag: String //who is it meant for ["All", "Student", "Alumni"]
+    var link: String
+    var deadline: String
 
     
 }

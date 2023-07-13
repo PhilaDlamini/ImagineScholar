@@ -15,63 +15,51 @@ struct CreateEventView: View {
     @State private var location = ""
     @State private var date = Date.now
     @State private var time = Date.now
-    @State private var user: User? = nil
+    @EnvironmentObject var user: User
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        VStack {
-            Form {
-                Section {
-                    TextField("Title", text: $title)
-                }
-                
-                Section("Description") {
-                    TextEditor(text: $description)
-                }
-                
-                Section {
-                    DatePicker("Date", selection: $date, displayedComponents: .date)
+        NavigationView {
+            VStack {
+                Form {
+                    Section {
+                        TextField("Title", text: $title)
+                    }
                     
-                    DatePicker("Time", selection: $date, displayedComponents: .hourAndMinute)
+                    Section("Description") {
+                        TextEditor(text: $description)
+                    }
                     
-                    TextField("Location", text: $location)
+                    Section {
+                        DatePicker("Date", selection: $date, displayedComponents: .date)
+                        
+                        DatePicker("Time", selection: $date, displayedComponents: .hourAndMinute)
+                        
+                        TextField("Location", text: $location)
+                    }
+                    
+                    Button("Create", action: createEvent)
                 }
                 
-                Button("Create", action: createEvent)
             }
-            
-        }
-        .navigationTitle("New Event")
-        .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            //load user
-            if let userData = UserDefaults.standard.data(forKey: "user") {
-                if let usr = try? JSONDecoder().decode(User.self, from: userData) {
-                    user = usr
-                }
-            }
+            .navigationTitle("New Event")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
     
     func createEvent() {
-        if let user = user {
-            
-            //gets the time 
-            
-            //TODO: mix date and time
-            let event = Event(name: title, location: location, description: description, authorURL: user.imageURL, date: Event.getIsoTime(from: date))
-            
-            let ref = Database.database().reference()
-            ref.child("events").child(event.id).setValue(try! event.getDict()) {(error, ref) in
-                if let error = error {
-                    print("Error creating event! \(error.localizedDescription)")
-                } else {
-                    print("posted event!")
-                }
+        //TODO: should mix date and time
+        let event = Event(name: title, location: location, description: description, authorURL: user.imageURL)
+        
+        let ref = Database.database().reference()
+        ref.child("events").child(event.id).setValue(try! event.getDict()) {(error, ref) in
+            if let error = error {
+                print("Error creating event! \(error.localizedDescription)")
+            } else {
+                print("posted event!")
             }
-            
-            dismiss()
         }
+        dismiss()
     }
 }
 

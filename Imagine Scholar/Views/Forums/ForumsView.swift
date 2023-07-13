@@ -67,7 +67,7 @@ struct ForumResponseView: View {
 }
 
 struct ForumsView: View {
-    @State private var user: User? = nil
+    @EnvironmentObject var user: User
     @State private var forum: Forum? = nil
     @State private var quotedResponse: ForumResponse? = nil
     @State private var showingSheet = false
@@ -129,14 +129,6 @@ struct ForumsView: View {
         .onAppear {
             loadForum()
             listenForUpdates()
-            
-            //load the user
-            if let userData = UserDefaults.standard.data(forKey: "user") {
-                if let usr = try? JSONDecoder().decode(User.self, from: userData) {
-                    user = usr
-                }
-            }
-
         }
         .sheet(isPresented: $showingSheet) {
             if let forum = forum {
@@ -174,30 +166,28 @@ struct ForumsView: View {
     
     //Sends the response
     func sendResponse() {
-        if let user = user {
-            if let forum = forum {
-                var responses = forum.responses ?? []
-                var response = ForumResponse(response: response, date: Date().ISO8601Format())
-                
-                if !anon {
-                    response.authorURL = user.imageURL
-                    response.authorName = user.name
-                    response.quotedResponse = quotedResponse?.id;
-                }
-                responses.append(response)
-                
-                //convert each response to a dict
-                var resps: [[String:Any]] = []
-                for response in responses {
-                    resps.append(try! response.getDict()!)
-                }
-                
-                ref.child("responses").setValue(resps) {err, _ in
-                    if let err = err {
-                        print("Error adding response! \(err.localizedDescription)")
-                    } else {
-                        print("Successfully added response!")
-                    }
+        if let forum = forum {
+            var responses = forum.responses ?? []
+            var response = ForumResponse(response: response)
+            
+            if !anon {
+                response.authorURL = user.imageURL
+                response.authorName = user.name
+            }
+            response.quotedResponse = quotedResponse?.id;
+            responses.append(response)
+            
+            //convert each response to a dict
+            var resps: [[String:Any]] = []
+            for response in responses {
+                resps.append(try! response.getDict()!)
+            }
+            
+            ref.child("responses").setValue(resps) {err, _ in
+                if let err = err {
+                    print("Error adding response! \(err.localizedDescription)")
+                } else {
+                    print("Successfully added response!")
                 }
             }
         }

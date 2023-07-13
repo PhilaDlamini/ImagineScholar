@@ -10,11 +10,11 @@ import FirebaseDatabase
 import Firebase
 
 struct AnnouncementView : View {
-    var user: User?
+    @EnvironmentObject var user: User
     let announcement: Announcement
     
     var body : some View {
-        NavigationLink(destination: AnnouncementDetailsView(announcement: announcement, user: user)){
+        NavigationLink(destination: AnnouncementDetailsView(announcement: announcement)){
             VStack(alignment: .leading, spacing: 20) {
                 HStack {
                     AsyncImage(url: URL(string: announcement.authorURL)) {phase in
@@ -56,13 +56,13 @@ struct AnnouncementView : View {
 struct AnnouncementsView: View {
     @State private var creatingAnnouncement = false
     @State private var announcements = [Announcement]()
-    @State private var user: User? = nil
+    @EnvironmentObject var user: User
     let ref = Database.database().reference().child("announcements")
     
     var body: some View {
         NavigationView {
             List(announcements) { annon in
-                AnnouncementView(user: user, announcement: annon)
+                AnnouncementView(announcement: annon)
             }
             .toolbar {
                 ToolbarItem(placement: .navigation) {
@@ -82,16 +82,6 @@ struct AnnouncementsView: View {
                 }
             }
             .onAppear{
-                
-                //load the user
-                if let userData = UserDefaults.standard.data(forKey: "user") {
-                    if let usr = try? JSONDecoder().decode(User.self, from: userData) {
-                        user = usr
-                        print("Loaded user in announcements view")
-                    }
-                }
-                
-                //attach listeners
                 attachListeners()
             }
             .sheet(isPresented: $creatingAnnouncement) {

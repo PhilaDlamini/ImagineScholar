@@ -13,7 +13,7 @@ struct PostDetailsView: View {
     @Environment(\.dismiss) var dismiss
     @State var post: Post
     @State private var comment = ""
-    @State private var user: User? = nil
+    @EnvironmentObject var user: User
     @State private var userComment: PostComment? = nil
     @State private var likedBy = ""
     
@@ -140,11 +140,6 @@ struct PostDetailsView: View {
             
         }
         .onAppear(perform: {
-            if let userData = UserDefaults.standard.data(forKey: "user") {
-                if let usr = try? JSONDecoder().decode(User.self, from: userData) {
-                    user = usr
-                }
-            }
             
             //figure out the "liked by" text
             if let likes = post.likes {
@@ -183,14 +178,12 @@ struct PostDetailsView: View {
         .navigationTitle("Post")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            if let user = user {
-                if user.imageURL == post.authorURL { //TODO: need a stronger  way to authenticate here
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button{
-                            deletePost()
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
+            if user.imageURL == post.authorURL { //TODO: need a stronger  way to authenticate here
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button{
+                        deletePost()
+                    } label: {
+                        Label("Delete", systemImage: "trash")
                     }
                 }
             }
@@ -226,33 +219,27 @@ struct PostDetailsView: View {
     }
     
     func postComment() { //comments on a given post
-        if let user = user {
-            var comments = post.comments ?? []
-            userComment = PostComment(author: user.name, imageURL: user.imageURL, content: comment)
-            comments.append(userComment!)
-            
-            //convert each comment to a dictionary
-            var coms: [[String:Any]] = []
-            for comment in comments {
-                coms.append(try! comment.getDict()!)
-            }
-            
-            let ref = Database.database().reference()
-            ref.child("posts").child(post.id).child("comments").setValue(coms) {err, _ in
-                if let err = err {
-                    print("Error adding comment! \(err.localizedDescription)")
-                } else {
-                    print("Successfully added comment!")
-                    
-                    comment = ""
-                    updatePost()
-                }
-            }
-            
-        } else {
-            print("Failed to load the current user ")
+        var comments = post.comments ?? []
+        userComment = PostComment(author: user.name, imageURL: user.imageURL, content: comment)
+        comments.append(userComment!)
+        
+        //convert each comment to a dictionary
+        var coms: [[String:Any]] = []
+        for comment in comments {
+            coms.append(try! comment.getDict()!)
         }
         
+        let ref = Database.database().reference()
+        ref.child("posts").child(post.id).child("comments").setValue(coms) {err, _ in
+            if let err = err {
+                print("Error adding comment! \(err.localizedDescription)")
+            } else {
+                print("Successfully added comment!")
+                
+                comment = ""
+                updatePost()
+            }
+        }
     }
     
     //deletes the post
