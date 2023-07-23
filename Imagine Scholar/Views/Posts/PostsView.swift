@@ -192,12 +192,12 @@ struct PostsView: View {
                         Label("Ops", systemImage: "o.circle.fill")
                     }
                 }
-//                ToolbarItem { //TODO: --> remove
-//                    Button("log out") {
-//                        try! Auth.auth().signOut()
-//                        //                        var user = getUser()
-//                    }
-//                }
+                ToolbarItem { //TODO: --> remove
+                    Button("log out") {
+                        try! Auth.auth().signOut()
+                        //                        var user = getUser()
+                    }
+                }
             }
             .onAppear{
                 attachListeners()

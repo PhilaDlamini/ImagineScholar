@@ -47,6 +47,9 @@
 		B39E663F2A53DB7100404100 /* AnnouncementDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E663E2A53DB7100404100 /* AnnouncementDetailsView.swift */; };
 		B39E66412A54EF7500404100 /* Forum.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E66402A54EF7500404100 /* Forum.swift */; };
 		B39E665D2A5B3B2600404100 /* Known issues.rtf in Resources */ = {isa = PBXBuildFile; fileRef = B39E665C2A5B3B2600404100 /* Known issues.rtf */; };
+		B3F309AA2A6CD9A7005F5914 /* NewsLetter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F309A92A6CD9A7005F5914 /* NewsLetter.swift */; };
+		B3F309AC2A6CE394005F5914 /* AddNewsLetter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F309AB2A6CE394005F5914 /* AddNewsLetter.swift */; };
+		B3F309AE2A6CEC35005F5914 /* PDFViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F309AD2A6CEC35005F5914 /* PDFViewer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -83,6 +86,9 @@
 		B39E663E2A53DB7100404100 /* AnnouncementDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnouncementDetailsView.swift; sourceTree = "<group>"; };
 		B39E66402A54EF7500404100 /* Forum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Forum.swift; sourceTree = "<group>"; };
 		B39E665C2A5B3B2600404100 /* Known issues.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = "Known issues.rtf"; sourceTree = "<group>"; };
+		B3F309A92A6CD9A7005F5914 /* NewsLetter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsLetter.swift; sourceTree = "<group>"; };
+		B3F309AB2A6CE394005F5914 /* AddNewsLetter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewsLetter.swift; sourceTree = "<group>"; };
+		B3F309AD2A6CEC35005F5914 /* PDFViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFViewer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +156,7 @@
 				4A1097302A1AFACA0072BCD7 /* Post.swift */,
 				4A5FC9442A2EEBD400C76847 /* User.swift */,
 				B39E66402A54EF7500404100 /* Forum.swift */,
+				B3F309A92A6CD9A7005F5914 /* NewsLetter.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -170,6 +177,7 @@
 				4A5FC95D2A326E5F00C76847 /* ImagePicker.swift */,
 				4A10971A2A19E55D0072BCD7 /* Imagine_ScholarApp.swift */,
 				4A5FC9552A2EFAE800C76847 /* Codable_JSON.swift */,
+				B3F309AD2A6CEC35005F5914 /* PDFViewer.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -224,6 +232,7 @@
 			isa = PBXGroup;
 			children = (
 				4A1097BB2A22AC4C0072BCD7 /* NewslettersView.swift */,
+				B3F309AB2A6CE394005F5914 /* AddNewsLetter.swift */,
 			);
 			path = Newsletter;
 			sourceTree = "<group>";
@@ -341,9 +350,11 @@
 				4A1097B82A22A06C0072BCD7 /* OpportunitiesView.swift in Sources */,
 				4A1097BA2A22A2E80072BCD7 /* AddOpportunityView.swift in Sources */,
 				4A5FC97E2A3545FF00C76847 /* PostDetailsView.swift in Sources */,
+				B3F309AC2A6CE394005F5914 /* AddNewsLetter.swift in Sources */,
 				4A1097902A1DD7470072BCD7 /* AnnouncementsView.swift in Sources */,
 				4A5FC9452A2EEBD400C76847 /* User.swift in Sources */,
 				4A1097352A1B002E0072BCD7 /* CreatePostView.swift in Sources */,
+				B3F309AA2A6CD9A7005F5914 /* NewsLetter.swift in Sources */,
 				B39E66412A54EF7500404100 /* Forum.swift in Sources */,
 				4A10978E2A1DD6E30072BCD7 /* CreateAnnouncementView.swift in Sources */,
 				4A10978C2A1DC0FA0072BCD7 /* CreateAccountView.swift in Sources */,
@@ -355,6 +366,7 @@
 				4A1097332A1AFDB90072BCD7 /* PostsView.swift in Sources */,
 				4A1097BC2A22AC4C0072BCD7 /* NewslettersView.swift in Sources */,
 				4A1097312A1AFACA0072BCD7 /* Post.swift in Sources */,
+				B3F309AE2A6CEC35005F5914 /* PDFViewer.swift in Sources */,
 				4A5FC9562A2EFAE800C76847 /* Codable_JSON.swift in Sources */,
 				4AF166212A4BD5D3009F7B56 /* QuotedPostView.swift in Sources */,
 				4A5FC9602A3290D700C76847 /* HomeView.swift in Sources */,

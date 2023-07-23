@@ -93,13 +93,25 @@ struct LoginView: View {
                            print("unknown error \(error.localizedDescription)")
                        }
             } else {
-                
-                //load the user data and save to defaults 
-                screen = "create"
-                
-                //TODO: update user info in user defaults
+                let uid = Auth.auth().currentUser!.uid
+                let ref = Database.database().reference()
+                ref.child("users").child(uid).observeSingleEvent(of: .value) {snapshot in
+                    
+                    if let userData = snapshot.value as? [String: Any] {
+                        let user: User = try! User.fromDict(dictionary: userData)
+                        //save user info
+                        if let encoded = try? JSONEncoder().encode(user) {
+                            UserDefaults.standard.set(encoded, forKey: "user")
+                            print("Saved user data to user defaults")
+                            
+                            //load the user data and save to defaults
+                            screen = "create"
+                        } else {
+                            print("Failed to save user data to defaults")
+                        }
+                    }
+                }
             }
-            
         }
     }
 }
