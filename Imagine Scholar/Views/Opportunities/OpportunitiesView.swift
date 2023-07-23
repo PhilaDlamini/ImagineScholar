@@ -38,28 +38,37 @@ struct OpportunitiesView: View {
     @State private var addingNew = false
     
     var body: some View {
-        List (opportunities) {op in
-            OpportunityView(opportunity: op)
-        }
-        .navigationTitle("Opportunities")
-        .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            opportunities.removeAll(where: {$0.tag != user.type || $0.tag == "all"})
-        }
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    addingNew = true
-                } label: {
-                    Image(systemName: "plus.circle")
+        NavigationView {
+            List (opportunities) {op in
+                OpportunityView(opportunity: op)
+            }
+            .onAppear {
+                opportunities.removeAll(where: {$0.tag != user.type || $0.tag == "all"})
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigation) {
+                    HStack {
+                        Image(systemName: "airplane.circle.fill")
+                        Text("Opportunities")
+                            .font(.headline)
+                    }
+                }
+                
+                
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        addingNew = true
+                    } label: {
+                        Image(systemName: "plus.circle")
+                    }
                 }
             }
-        }
-        .onAppear {
-            attachListeners()
-        }
-        .sheet(isPresented: $addingNew) {
-            AddOpportunityView()
+            .onAppear {
+                attachListeners()
+            }
+            .sheet(isPresented: $addingNew) {
+                AddOpportunityView()
+            }
         }
     }
     

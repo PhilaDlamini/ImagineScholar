@@ -78,6 +78,7 @@ struct AddOpportunityView: View {
     func send() {
         //test link first
         if let url = URL(string: getURL()) { //TODO: doesn't work
+            print("url is \(url.absoluteString)")
             //create new opportunity
             let op = Opportunity(name: name, content: description, tag: forWho, link: getURL(), deadline: deadline.ISO8601Format()) //TODO: use correct deadline (with fractional seconds)
             
